@@ -1,5 +1,5 @@
 # Define CMake project's properties
-cmake_minimum_required(VERSION 3.16.5)
+cmake_minimum_required(VERSION 3.17)
 project(ZSRStdLibrary C ASM)
 set(CMAKE_C_STANDARD 11)
 enable_language(ASM)
@@ -26,25 +26,25 @@ add_definitions(
 
 # ZSR's Python API SOURCES
 set(pyapi_src
-        src/z-pyapi/pyapi.c
+        src/pyapi/pyapi.c
         )
 
 # ZSR's Python API HEADERS
 set(pyapi_headers
-        include/z-pyapi/pyapi.h
-        include/z-pyapi/pyfile.h
+        pyapi/pyapi.h
+        pyapi/pyfile.h
         )
 
 # ZSR's regex lib SOURCES
 set(regexlib_src
-        src/z-regexlib/regex.c
-        src/z-regexlib/regex_cond.c
+        src/regex/regex.c
+        src/regex/regex_cond.c
         )
 
 # ZSR's regex lib HEADERS
 set(regexlib_headers
-        include/z-regexlib/regex.h
-        include/z-regexlib/regexlib.h
+        include/regex/regex.h
+        include/regex/regexlib.h
         )
 
 # GLOBAL SOURCES
