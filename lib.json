@@ -1,0 +1,28 @@
+{
+  "id": "zsrcstd",
+  "name": "Std Library (C)",
+  "plang" : ["C", "ASM"],
+  "author": ["Rin Baudelet"],
+  "os": [
+    {"name":"Windows 10","arch": 64},
+    {"name": "Debian", "arch": 64},
+    {"name": "Ubuntu", "arch": 64}
+  ],
+  "version": {
+    "date": [2021,2],
+    "release":  0,
+    "major": 4,
+    "minor": 0,
+    "patch": 4,
+    "version": "2021/02 0.4.0.0004"
+  },
+  "standard" : {
+    "c": "c11",
+    "asm": "GAS AT&T"
+  },
+  "dependencies": [],
+  "binFolder": {
+    "debug": "cmake-build-debug",
+    "release": "cmake-build-release"
+  }
+}
