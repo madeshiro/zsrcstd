@@ -25,6 +25,14 @@ __Z_INFINITE: .int 0xffffffff
 #   0x1c > (4bytes) int32          - ret        ]    \t
 #   0x20 > (8bytes) void*          - reserved   ]     \a
 #   0x28 > (1byte)  bool           - running    ]      \
+# TODO update handler memory use
+#   0x0  > (4bytes) uint32 - pid                ] hea\
+#   0x4  > (8bytes) char*  - name               ]     \der
+#   0xc  > (8bytes) int (*)(void*) - function   ]  \d
+#   0x14 > (8bytes) HANDLE         - handler    ]   \a
+#   0x1c > (4bytes) int32          - ret        ]    \t
+#   0x20 > (8bytes) void*          - reserved   ]     \a
+#   0x28 > (1byte)  bool           - running    ]      \
 #
 # };
 # > zsr_thread's size = (0x29) 41 bytes
