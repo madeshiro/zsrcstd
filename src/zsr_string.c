@@ -108,7 +108,7 @@ char** zstrcut(const char* str, const char* delimiter, zuint32* _Z_out pCount)
         // test if need to increase array of fields
         if (*pCount == findex)
         {
-            *pCount++;
+            (*pCount)++;
             zrealloc(cuts, *pCount);
         }
         if (str[i] == delimiter[0])

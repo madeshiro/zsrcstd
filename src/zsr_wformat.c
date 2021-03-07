@@ -46,6 +46,7 @@ wchar_t* zwformat(const wchar_t* _format, ...)
         if (_format[fcur] == L'%' && (f = _z_wgetformat(&_format[fcur+1],&skip)) != _finvalid)
         {
             wchar_t* arg = _z_wgetvalue(f, valist, &len);
+            zva_arg(valist, zbigint);
             if (scur + len >= strlen)
             {
                 strlen+=len;
@@ -85,6 +86,7 @@ wchar_t* zwformatl(const wchar_t* _format, zva_list valist)
         if (_format[fcur] == L'%' && (f = _z_wgetformat(&_format[fcur+1],&skip)) != _finvalid)
         {
             wchar_t* arg = _z_wgetvalue(f, valist, &len);
+            zva_arg(valist, zbigint);
             if (scur + len >= strlen)
             {
                 strlen+=len;
