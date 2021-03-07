@@ -4,6 +4,7 @@
 
 typedef void* zptr;
 typedef void* zpvoid;
+typedef void* zhandler; /**< Global handler type for ZsrLib's features */
 
 #define ZSR_STDLIB 202103040L //! 2021/03 0.4.0 (R.M.m) .0004 patch
 
