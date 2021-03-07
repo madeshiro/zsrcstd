@@ -64,9 +64,16 @@
 #   0xc  > (8bytes) int (*)(void*)  - function  ] d\
 #   0x14 > (4bytes) int32           - ret       ]  a\t
 #   0x18 > (1byte)  bool            - running   ]    \a
+
+#   0x0  > (4bytes) uint32 - handler id         ]  he\
+#   0x4  > (4bytes) uint32 - tid                ]    a\d
+#   0x8  > (8bytes) char*  - name               ]      \er
+#   0x10 > (8bytes) int (*)(void*)  - function  ] d\
+#   0x18 > (4bytes) int32           - ret       ]  a\t
+#   0x1c > (1byte)  bool            - running   ]    \a
 #
 # };
-# > zsr_thread's size = (0x19) 25 bytes
+# > zsr_thread's size = (0x1d) 29 bytes
 #
 ## >> ZSR_MUTEX DESCRIPTION << ##
 # :: zsr_mutex (uint32*) {
@@ -137,14 +144,14 @@ _Z_sys_waitid:
 # @exit
 __zsr_thread_saferunning:
     push %rdi
-    mov 0xc(%rdi), %rax
+    mov 0x10(%rdi), %rax
     mov %rsi, %rdi
     callq *%rax
     popq %rsi
     mov %eax, %edi
-    mov %edi, 0x14(%rsi)
+    mov %edi, 0x18(%rsi)
     movl $0x0, (%rsi)
-    movb $0x0, 0x18(%rsi)
+    movb $0x0, 0x1c(%rsi)
     mov $0x0, %rdi
     mov $0x3c, %rax
     syscall
@@ -194,7 +201,7 @@ zThreadCreate:
     mov $0x19, %rdi
     callq _Z_calloc
     mov -0x8(%rbp), %rdx
-    mov %rdx, 0xc(%rax)
+    mov %rdx, 0x10(%rax)
     add $0x10, %rsp
     pop %rbp
     ret
@@ -203,7 +210,7 @@ zThreadCreate:
 # @param %rdi (void*) - zsr_thread
 zThreadDestroy:
     mov $0, %rax
-    cmpb $0x0, 0x18(%rdi)
+    cmpb $0x0, 0x1c(%rdi)
     jne 1f
     push %rbp
     mov %rsp, %rbp
@@ -253,8 +260,8 @@ zThreadStart:
  2: cmpl $-1, %eax
     je 1f
     mov -0x8(%rbp), %rdi
-    mov %eax, (%rdi)
-    movb $0x1, 0x18(%rdi)
+    mov %eax, 0x4(%rdi)
+    movb $0x1, 0x1c(%rdi)
  1: add $0x10, %rsp
     pop %rbp
     ret
@@ -276,11 +283,11 @@ zThreadJoin:
     mov $0, %r10
     mov $0x1, %rdx
     lea -0x10(%rbp), %rsi
-    mov (%rdi), %edi
+    mov 0x4(%rdi), %edi
     mov $61, %rax
     syscall
     mov -0x8(%rbp), %rdi
-    mov 0x14(%rdi), %eax
+    mov 0x18(%rdi), %eax
     add $0x10, %rsp
     pop %rbp
     ret
@@ -290,7 +297,7 @@ zThreadJoin:
 # @return %rax (bool)
 zThreadCancel:
     mov $0, %rax
-    mov 0x18(%rdi), %al
+    mov 0x1c(%rdi), %al
     cmpb $0, %al
     je 1f
     push %rbp
@@ -300,15 +307,15 @@ zThreadCancel:
     call _Z_sys_getpid
     mov %rax, %rdi
     mov -0x8(%rbp), %rsi
-    mov (%rsi), %esi
+    mov 0x4(%rsi), %esi
     mov $0x9, %edx
     call _Z_sys_tgkill
     mov -0x8(%rbp), %rdi
-    movb $0x0, 0x18(%rdi)
-    movl $0x0, (%rdi)
-    movl $0x9, 0x14(%rdi)
+    movb $0x0, 0x1c(%rdi)
+    movl $0x0, 0x4(%rdi)
+    movl $0x9, 0x18(%rdi)
     add $0x1, %eax
-    add $010, %rsp
+    add $0x10, %rsp
     pop %rbp
  1: ret
 
@@ -316,7 +323,7 @@ zThreadCancel:
 # @param %rdi (void*) - zsr_thread
 # @return %ah (bool)
 zThreadIsRunning:
-    mov 0x18(%rdi), %ah
+    mov 0x1c(%rdi), %ah
     ret
 
 .globl zLockCreate
@@ -351,20 +358,20 @@ zThreadSetName:
     mov %rsi, %rdi
     callq zstrcopy
     pop %rdi
-    mov %rax, 0x4(%rdi)
+    mov %rax, 0x8(%rdi)
     ret
 
 # @brief zThreadGetName
 # @param %rdi (void*) - zsr_thread
 # @return %rax (char*)
 zThreadGetName:
-    mov 0x4(%rdi), %rax
+    mov 0x8(%rdi), %rax
     ret
 
 # @brief zThreadTID
 # @param %rdi (void*) - zsr_thread
 # @return %rax (zulong)
 zThreadTID:
-    movl 0x0(%rdi), %eax
+    movl 0x4(%rdi), %eax
     ret
 
