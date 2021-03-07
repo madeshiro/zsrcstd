@@ -14,11 +14,12 @@
 ## >> ZSR_SOCKET DESCRIPTION << ##
 # :: zsr_socket {
 #
-#   0x0  > (4bytes) uint32 - fd       ] da\
-#   0x8  > (8bytes) void*  - sockaddr ]    \ta  # align(8)
-#   0x10 > (4bytes) int32  - af       ]  m\
-#   0x14 > (4bytes) int32  - type     ]   e\t
-#   0x18 > (4bytes) int32  - protocol ]     \a
+#   0x0  > (4bytes) uint32 - handler id ] header
+#   0x4  > (4bytes) uint32 - fd         ] da\
+#   0x8  > (8bytes) void*  - sockaddr   ]    \ta
+#   0x10 > (4bytes) int32  - af         ]  m\
+#   0x14 > (4bytes) int32  - type       ]   e\t
+#   0x18 > (4bytes) int32  - protocol   ]     \a
 #
 # };
 # > zsr_socket's size = (0x1c) 28 bytes
@@ -115,7 +116,7 @@ zsocket:
     mov -0xc(%rbp), %edi
     mov %edi, 0x18(%rax)
     mov -0x10(%rbp), %edi
-    mov %edi, (%rax)
+    mov %edi, 0x4(%rax)
     movq $0x0, 0x8(%rax)
     jmp 2f
  1: mov $0, %eax
