@@ -7,6 +7,7 @@
 ## Features
 ### generic features
 ### features handler-necessary
+
 <table>
     <thead>
         <th>Features</th>
@@ -31,7 +32,9 @@
         </tr>
     </tbody>
 </table>
+
 ### operating-system features
+
 <table>
     <thead>
         <tr>
