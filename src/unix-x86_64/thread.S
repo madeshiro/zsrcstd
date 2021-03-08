@@ -59,31 +59,16 @@
 ## >> ZSR_THREAD DESCRIPTION << ##
 # :: zsr_thread {
 #
-#   0x0  > (4bytes) uint32 - tid                ] hea\
-#   0x4  > (8bytes) char*  - name               ]     \der
-#   0xc  > (8bytes) int (*)(void*)  - function  ] d\
-#   0x14 > (4bytes) int32           - ret       ]  a\t
-#   0x18 > (1byte)  bool            - running   ]    \a
-
 #   0x0  > (4bytes) uint32 - handler id         ]  he\
 #   0x4  > (4bytes) uint32 - tid                ]    a\d
 #   0x8  > (8bytes) char*  - name               ]      \er
 #   0x10 > (8bytes) int (*)(void*)  - function  ] d\
 #   0x18 > (4bytes) int32           - ret       ]  a\t
-#   0x1c > (1byte)  bool            - running   ]    \a
+#   0x1c > (4byte)  bool            - running   ]    \a
 #
 # };
-# > zsr_thread's size = (0x1d) 29 bytes
+# > zsr_thread's size = (0x20) 32 bytes
 #
-## >> ZSR_MUTEX DESCRIPTION << ##
-# :: zsr_mutex (uint32*) {
-#   0x0 > (4bytes) uint32 - pid
-# };
-#
-## >> ZSR_COND DESCRIPTION << ##
-# :: zsr_cond {
-#
-# };
 #
 # \/
 
@@ -151,11 +136,21 @@ __zsr_thread_saferunning:
     mov %eax, %edi
     mov %edi, 0x18(%rsi)
     movl $0x0, (%rsi)
-    movb $0x0, 0x1c(%rsi)
+    mov %rsi, %rdi
+    call __zsr_thread_safestop
     mov $0x0, %rdi
     mov $0x3c, %rax
     syscall
     pop %rbp
+    ret
+
+# @brief __zsr_thread_safestop
+# @param %rdi (zsr_thread) - thread
+__zsr_thread_safestop:
+    movl $0x0, 0x1c(%rdi)
+    lea 0x1c(%rdi), %rdi
+    mov $0x7fffffff, %esi # INT_MAX
+    call _Z_sys_futex
     ret
 
 .globl zThreadCreate
@@ -198,7 +193,7 @@ zThreadCreate:
     mov %rsp, %rbp
     sub $0x10, %rsp
     mov %rdi, -0x8(%rbp)
-    mov $0x19, %rdi
+    mov $0x20, %rdi
     callq _Z_calloc
     mov -0x8(%rbp), %rdx
     mov %rdx, 0x10(%rax)
@@ -268,28 +263,12 @@ zThreadStart:
 
 # @brief zThreadJoin
 # @param %rdi (void*) - thread
-# TODO ThreadJoin doesn't work !
 zThreadJoin:
-    push %rbp
-    mov %rsp, %rbp
-    sub $0x10, %rsp
-    mov %rdi, -0x8(%rbp)
-#    mov $0x1, %r8
-#    mov $0x1, %r10
-#    mov $0x0, %rdx
-#    mov (%rdi), %esi
-#    mov $0x1, %rdi
-#    mov $0xf7, %rax
-    mov $0, %r10
-    mov $0x1, %rdx
-    lea -0x10(%rbp), %rsi
-    mov 0x4(%rdi), %edi
-    mov $61, %rax
-    syscall
-    mov -0x8(%rbp), %rdi
-    mov 0x18(%rdi), %eax
-    add $0x10, %rsp
-    pop %rbp
+    lea 0x1c(%rdi), %rdi
+    mov $0x0, %rsi # FUTEX_WAIT
+    mov $0x1, %edx # IF thread running, wait
+    mov $0x0, %r10 # INFINITE WAIT (timespec* = null)
+    call _Z_sys_futex
     ret
 
 # @brief zThreadCancel
@@ -311,7 +290,7 @@ zThreadCancel:
     mov $0x9, %edx
     call _Z_sys_tgkill
     mov -0x8(%rbp), %rdi
-    movb $0x0, 0x1c(%rdi)
+    call _zsr_thread_safestop
     movl $0x0, 0x4(%rdi)
     movl $0x9, 0x18(%rdi)
     add $0x1, %eax

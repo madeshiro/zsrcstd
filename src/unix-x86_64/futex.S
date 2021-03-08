@@ -1,6 +1,6 @@
 # Unix x86_64 assembly files
 # @file thread.S - system call
-# @version 2020/11 0.3.0.0002
+# @version 2021/03 0.3.0.0004
 .att_syntax
 .text
 
@@ -34,13 +34,19 @@
 ## >> ZSR_MUTEX DESCRIPTION << ##
 # :: zsr_mutex {
 #
+#   0x0 > (4bytes) uint32 - handler id ] header
+#   0x4 > (4bytes) uint32 - status     ] data
 # };
+#
+# > sizeof(zsr_mutex) = 8bytes
 #
 ## >> ZSR_COND DESCRIPTION << ##
 # :: zsr_cond {
-#
+#   0x0 > (4bytes) uint32 - handler id ] header
+#   0x4 > (4bytes) uint32 - condition  ] data
 # };
 #
+# > sizeof(zsr_cond) = 8bytes
 # \/
 
 .globl _Z_sys_futex
@@ -57,3 +63,4 @@ _Z_sys_futex:
     mov $0xCA, %rax
     syscall
     ret
+
