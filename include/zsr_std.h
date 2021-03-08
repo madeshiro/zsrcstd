@@ -112,6 +112,8 @@ typedef zdouble zbigfloat; // biggest float
 #define ZSR_HANDLER_SOCKET 0x00000020
 #define ZSR_HANDLER_PIPE   0x00000040
 #define ZSR_HANDLER_THREAD 0x00000080
+#define ZSR_HANDLER_MUTEX  0x00000081
+#define ZSR_HANDLER_COND   0x00000082
 
 #ifdef __cplusplus
 extern "C" {
