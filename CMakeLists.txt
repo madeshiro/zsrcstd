@@ -16,6 +16,7 @@ message("> (build) SYSTEM-ARCH: " ${ZSR_SYS_ARCH} "bit")
 
 # Set project's properties
 include_directories("include")
+include_directories(".")
 add_definitions(
         -DZSRSTD
         -DZSRLIB_${ZSR_SYS_ARCH}

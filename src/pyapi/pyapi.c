@@ -3,7 +3,7 @@
  * @version 2020/11 0.3.0.0002
  * @author Rin Baudelet (madeshiro)
  */
-#include "z-pyapi/pyapi.h"
+#include "pyapi/pyapi.h"
 #include "zsr_stdio.h"
 #include "zsr_string.h"
 
