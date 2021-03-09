@@ -239,7 +239,7 @@ zThreadStart:
     mov -0x10(%rsp), %rsi
     mov %rdi, -0x8(%rax)
     mov %rsi, -0x10(%rax)
-    mov $0x18b14, %edi # CLONE_VM | CLONE_FS | CLONE_PARENT | CLONE_SIGHAND | CLONE_THREAD | SIGCHLD
+    mov $0x18b14, %edi # CLONE_VM|CLONE_FS|CLONE_PARENT|CLONE_SIGHAND|CLONE_THREAD|SIGCHLD
     mov %rax, %rsi
     mov $0x0, %rdx
     mov $0x0, %r10

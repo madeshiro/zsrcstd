@@ -27,7 +27,7 @@ extern "C" {
 
     zsrcall zsr_mutex zMutexCreate();
     zsrcall zbool zMutexDestroy(zsr_mutex lock);
-    zsrcall zenum zMutexLock(zsr_mutex lock);
+    zsrcall zbool zMutexLock(zsr_mutex lock);
     zsrcall zbool zMutexUnlock(zsr_mutex lock);
 //  zsrcall zbool zMutexHoldsLock(zsr_mutex lock);
 
@@ -36,10 +36,10 @@ extern "C" {
     zsrcall void  zThreadCondWait(zsr_cond *cond, zsr_mutex* mutex);
     zsrcall zbool zThreadCondSignal(zsr_cond* cond);
 
-    zsrcall void zSleep(zlong millis);
-    zsrcall void zThreadGetPID();
-    zsrcall void zThreadSleep(zlong millis);
-    zsrcall void zThreadNanoSleep(zlong millis, zlong nano);
+    zsrcall void   zSleep(zlong millis);
+    zsrcall zulong zThreadGetPID();
+    zsrcall void   zThreadSleep(zlong millis);
+    zsrcall void   zThreadNanoSleep(zlong millis, zlong nano);
 
     zsrcall void zThreadSetName(zsr_thread thread, const zsr_string name);
     zsrcall const char* zThreadGetName(zsr_thread thread);

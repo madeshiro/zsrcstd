@@ -4,8 +4,6 @@
 .att_syntax
 .text
 
-# TODO futex.S_unix
-
 .set FUTEX_PRIVATE_FLAG,      128
 .set FUTEX_CLOCK_REALTIME,	  256
 
@@ -23,6 +21,8 @@
 .set FUTEX_WAIT_REQUEUE_PI,	  0xb
 .set FUTEX_CMP_REQUEUE_PI,	  0xc
 .set SIGCHLD, 20
+.set Z_FUTEX_UNLOCK,               0x000000
+.set Z_FUTEX_LOCK,                 0x100000
 
 #### <<< THREAD / unix-x86_64 >>> #####
 # > functions declared in `unix-86_64\zsr_stdio.c` (unix-x86_64 decl)
@@ -35,7 +35,8 @@
 # :: zsr_mutex {
 #
 #   0x0 > (4bytes) uint32 - handler id ] header
-#   0x4 > (4bytes) uint32 - status     ] data
+#   0x4 > (4bytes) uint32 - status     ] da\
+#   0x8 > (4bytes) uint32 - tid        ]    \ta
 # };
 #
 # > sizeof(zsr_mutex) = 8bytes
@@ -64,3 +65,76 @@ _Z_sys_futex:
     syscall
     ret
 
+.globl zMutexCreate
+zMutexCreate:
+    mov $0xc, %rdi
+    call _Z_alloc
+    movl $0x00000081, (%rax)
+    movl $Z_FUTEX_UNLOCK, 0x4(%rax)
+    movl $0x0, 0x8(%rax)
+    ret
+
+.globl zMutexDestroy
+zMutexDestroy:
+    cmpl $Z_FUTEX_LOCK, 0x4(%rdi)
+    jne 1f
+    mov $0x0, %rax
+    ret
+1:  call _Z_free
+    ret
+
+.globl zMutexLock
+# @brief zMutexLock
+# @param %rdi (zsr_mutex)
+# @return %rax (bool) - True if mutex has been locked
+zMutexLock:
+    push %rbp
+    mov %rsp, %rbp
+    sub $0x10, %rsp
+    mov %rdi, -0x8(%rbp)
+    mov $0x0, %r10
+    mov $Z_FUTEX_LOCK, %edx
+    mov $FUTEX_WAIT, %esi
+    lea 0x4(%rdi), %rdi
+    call _Z_sys_futex
+    mov -0x8(%rbp), %rdi
+    cmpl $Z_FUTEX_LOCK, 0x4(%rdi)
+    jne 1f
+    mov $0x0, %rax
+    ret
+1:  movl $Z_FUTEX_LOCK, 0x4(%rdi)
+    call zThreadGetPID
+    mov -0x8(%rbp), %rdi
+    mov %eax, 0x8(%rdi)
+    mov $0x1, %rax
+    ret
+
+.globl zMutexUnlock
+# @brief zMutexUnlock
+# @param %rdi (zsr_mutex)
+# @return %rax (bool) - True if mutex has been unlocked
+zMutexUnlock:
+    push %rbp
+    mov %rsp, %rbp
+    sub $0x10, %rsp
+    mov %rdi, -0x8(%rbp)
+    call zThreadGetPID
+    mov %eax, -0xc(%rbp)
+    mov %eax, %esi
+    mov -0x8(%rbp), %rdi
+    cmpl $Z_FUTEX_LOCK, 0x4(%rdi)
+    jne 1f
+    cmpl %esi, 0x8(%rdi)
+    jne 1f
+    movl $Z_FUTEX_UNLOCK, 0x4(%rdi)
+    movl $0x0, 0x8(%rdi)
+    lea 0x4(%rdi), %rdi
+    mov $FUTEX_WAKE, %esi
+    mov $0x1, %r10d
+    call _Z_sys_futex
+    mov $0x1, %rax
+    jmp 2f
+1:  mov $0x0, %rax
+2:  add $0x10, %rsp
+    pop %rbp
+    ret

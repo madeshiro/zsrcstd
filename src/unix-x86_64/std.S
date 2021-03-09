@@ -27,6 +27,7 @@
 .globl _Z_allocs
 .globl _Z_mcopy
 .globl _Z_mswap
+.globl _Z_hndlid
 
 # @brief _Z_sys_mmap (simplified)
 # @param %rdi (size_t) - length
@@ -170,3 +171,10 @@ _Z_mswap:
     inc %rcx
     jmp 1b
 1:  retq
+
+# @brief _Z_hndlid
+# @param %rdi (zhandler) - handler
+# @return %eax (int) - id
+_Z_hndlid:
+    mov 0x0(%rdi), %eax
+    ret

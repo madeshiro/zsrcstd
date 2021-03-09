@@ -1,6 +1,11 @@
 #include "zsr_thread.h"
 #include "headers/thread_S.h"
 
+void zSleep(zlong millis)
+{
+    zThreadSleep(millis);
+}
+
 void zThreadSleep(zlong millis)
 {
     zThreadNanoSleep(millis, 0l);
