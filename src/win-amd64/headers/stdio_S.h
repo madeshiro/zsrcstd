@@ -15,6 +15,7 @@ int zsrcall _Z_winapi_Wcread(wchar_t * __buf, unsigned long __read);
 
 struct _z_file
 {
+    const zuint32 handler_id;
     void* name;
     void* fd;
 #ifdef WIN32
