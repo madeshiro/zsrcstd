@@ -5,7 +5,7 @@
  */
 #include "zsr_string.h"
 #include "zsr_container.h"
-#include "z-regexlib/regex.h"
+#include "regex/regex.h"
 
 zulong zstrlen(const char* buf)
 {
