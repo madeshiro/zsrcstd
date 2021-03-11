@@ -86,6 +86,7 @@ set(HEADERS
 
 # GLOBAL ASSEMBLY FILES
 set(ASM
+        include/zsr_asm_const.S
         )
 
 message("\n--- PROJECTS PROPERTIES ---")
