@@ -1,0 +1,26 @@
+# global assembly files
+# @file zsr_asm_const.S - constant
+# @version 2021/03 0.4.0.0004
+
+.set ZEAGAIN     , 0x00000010
+.set ZEBUSY      , 0x00000020
+.set ZEINVAL     , 0x00000040
+.set ZENOMEM     , 0x00000080
+.set ZENOSYS     , 0x00000100
+.set ZEPERM      , 0x00000200
+.set ZESRCH      , 0x00000400
+.set ZETIMEDOUT  , 0x00000800
+
+.set ZSR_HANDLER_FILE   , 0x00000010
+.set ZSR_HANDLER_SOCKET , 0x00000020
+.set ZSR_HANDLER_PIPE   , 0x00000040
+.set ZSR_HANDLER_THREAD , 0x00000080
+.set ZSR_HANDLER_MUTEX  , 0x00000081
+.set ZSR_HANDLER_COND   , 0x00000082
+
+.set ZMUTEX_LOCK    , 0x100
+.set ZMUTEX_UNLOCK  , 0x200
+
+.set ZCOND_TRUE  , 0x1
+.set ZCOND_FALSE , 0x0
+
