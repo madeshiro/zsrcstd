@@ -101,12 +101,13 @@ typedef zdouble zbigfloat; // biggest float
 
 #define zerror zgetlasterror()
 #define ZEAGAIN     0x00000010
-#define ZEINVAL     0x00000020
-#define ZENOMEM     0x00000040
-#define ZENOSYS     0x00000080
-#define ZEPERM      0x00000100
-#define ZESRCH      0x00000200
-#define ZETIMEDOUT  0x00000400
+#define ZEBUSY      0x00000020
+#define ZEINVAL     0x00000040
+#define ZENOMEM     0x00000080
+#define ZENOSYS     0x00000100
+#define ZEPERM      0x00000200
+#define ZESRCH      0x00000400
+#define ZETIMEDOUT  0x00000800
 
 #define ZSR_HANDLER_FILE   0x00000010
 #define ZSR_HANDLER_SOCKET 0x00000020
@@ -178,6 +179,25 @@ extern "C" {
      * @return
      */
     int zgetlasterror();
+
+    /**
+     * Close handler. Should be one of this list :
+     * <ul>
+     *  <li>zsr_file</li>
+     *  <li>zsr_thread</li>
+     *  <li>zsr_socket</li>
+     *  <li>zsr_mutex</li>
+     *  <li>zsr_cond</li>
+     * </ul>
+     * @param hndl (zhandler) - the handler to close
+     * @return True if the handler has been successfuly closed. False otherwise. <br/>
+     * If false, check <b>zgetlasterror()</b> for more details :
+     * <ul>
+     *  <li><b>ZEINVAL</b> Invalid handler (not supported)</li>
+     *  <li><b>ZEBUSY</b> Handler busy (e.g: thread running, mutex in use...)
+     * </ul>
+     */
+    zbool zclosehandler(zhandler hndl);
 
 #ifdef __cplusplus
 }
