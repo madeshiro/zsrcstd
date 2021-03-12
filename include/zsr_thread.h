@@ -29,7 +29,6 @@ extern "C" {
     zsrcall zbool zMutexDestroy(zsr_mutex lock);
     zsrcall zenum zMutexLock(zsr_mutex lock);
     zsrcall zbool zMutexUnlock(zsr_mutex lock);
-//  zsrcall zbool zMutexHoldsLock(zsr_mutex lock);
 
     zsrcall zsr_cond zCondCreate();
     zsrcall zbool zCondDestroy(zsr_cond cond);
