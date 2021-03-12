@@ -5,6 +5,7 @@
 .set ZEAGAIN     , 0x00000010
 .set ZEBUSY      , 0x00000020
 .set ZEINVAL     , 0x00000040
+.set ZENOLCK     , 0x00001000
 .set ZENOMEM     , 0x00000080
 .set ZENOSYS     , 0x00000100
 .set ZEPERM      , 0x00000200
@@ -21,6 +22,6 @@
 .set ZMUTEX_LOCK    , 0x100
 .set ZMUTEX_UNLOCK  , 0x200
 
-.set ZCOND_TRUE  , 0x1
-.set ZCOND_FALSE , 0x0
+.set ZCOND_BUSY , 0x1
+.set ZCOND_FREE , 0x0
 
