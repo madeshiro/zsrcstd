@@ -1,8 +1,9 @@
 # Unix x86_64 assembly files
 # @file thread.S - system call
-# @version 2021/03 0.3.0.0004
+# @version 2021/03 0.4.0.0005
 .att_syntax
 .text
+.include "zsr_asm_const.S"
 
 .set FUTEX_PRIVATE_FLAG,      128
 .set FUTEX_CLOCK_REALTIME,	  256
@@ -21,8 +22,6 @@
 .set FUTEX_WAIT_REQUEUE_PI,	  0xb
 .set FUTEX_CMP_REQUEUE_PI,	  0xc
 .set SIGCHLD, 20
-.set Z_FUTEX_UNLOCK,               0x000000
-.set Z_FUTEX_LOCK,                 0x100000
 
 #### <<< THREAD / unix-x86_64 >>> #####
 # > functions declared in `unix-86_64\zsr_stdio.c` (unix-x86_64 decl)
@@ -45,9 +44,10 @@
 # :: zsr_cond {
 #   0x0 > (4bytes) uint32 - handler id ] header
 #   0x4 > (4bytes) uint32 - condition  ] data
+#   0x8 > (8bytes) void*  - mutex      ] lock
 # };
 #
-# > sizeof(zsr_cond) = 8bytes
+# > sizeof(zsr_cond) = 16bytes
 # \/
 
 .globl _Z_sys_futex
@@ -70,14 +70,16 @@ zMutexCreate:
     mov $0xc, %rdi
     call _Z_alloc
     movl $0x00000081, (%rax)
-    movl $Z_FUTEX_UNLOCK, 0x4(%rax)
+    movl $ZMUTEX_UNLOCK, 0x4(%rax)
     movl $0x0, 0x8(%rax)
     ret
 
 .globl zMutexDestroy
 zMutexDestroy:
-    cmpl $Z_FUTEX_LOCK, 0x4(%rdi)
+    cmpl $ZMUTEX_LOCK, 0x4(%rdi)
     jne 1f
+    mov $ZEBUSY, %edi
+    call zsetlasterror
     mov $0x0, %rax
     ret
 1:  call _Z_free
@@ -93,20 +95,25 @@ zMutexLock:
     sub $0x10, %rsp
     mov %rdi, -0x8(%rbp)
     mov $0x0, %r10
-    mov $Z_FUTEX_LOCK, %edx
+    mov $ZMUTEX_LOCK, %edx
     mov $FUTEX_WAIT, %esi
     lea 0x4(%rdi), %rdi
     call _Z_sys_futex
     mov -0x8(%rbp), %rdi
-    cmpl $Z_FUTEX_LOCK, 0x4(%rdi)
-    jne 1f
+    mov $ZMUTEX_UNLOCK, %eax
+    mov $ZMUTEX_LOCK, %edi
+    lock cmpxchg %edi, 0x4(%rdi)
+    je 1f
+    mov $ZENOLCK, %edi
+    call zsetlasterror
     mov $0x0, %rax
-    ret
-1:  movl $Z_FUTEX_LOCK, 0x4(%rdi)
-    call zThreadGetPID
+    jmp 2f
+1:  call zThreadGetPID
     mov -0x8(%rbp), %rdi
     mov %eax, 0x8(%rdi)
     mov $0x1, %rax
+2:  add $0x10, %rsp
+    pop %rbp
     ret
 
 .globl zMutexUnlock
@@ -122,11 +129,12 @@ zMutexUnlock:
     mov %eax, -0xc(%rbp)
     mov %eax, %esi
     mov -0x8(%rbp), %rdi
-    cmpl $Z_FUTEX_LOCK, 0x4(%rdi)
-    jne 1f
     cmpl %esi, 0x8(%rdi)
     jne 1f
-    movl $Z_FUTEX_UNLOCK, 0x4(%rdi)
+    mov $ZMUTEX_LOCK, %eax
+    mov $ZMUTEX_UNLOCK, %esi
+    lock cmpxchg %esi, 0x4(%rdi)
+    jne 1f
     movl $0x0, 0x8(%rdi)
     lea 0x4(%rdi), %rdi
     mov $FUTEX_WAKE, %esi
@@ -134,7 +142,77 @@ zMutexUnlock:
     call _Z_sys_futex
     mov $0x1, %rax
     jmp 2f
-1:  mov $0x0, %rax
+1:  mov $ZEINVAL, %edi
+    call zsetlasterror
+    mov $0x0, %rax
 2:  add $0x10, %rsp
+    pop %rbp
+    ret
+
+.globl zMutexIsLock
+# @brief zMutexIsLock
+# @param %rdi (zsr_mutex)
+# @return %rax (bool) - Mutex lock status
+zMutexIsLock:
+    mov $0x1, %rsi
+    cmpl $ZMUTEX_LOCK, 0x4(%rdi)
+    mov $0x0, %rax
+    cmove %rsi, %rax
+    ret
+
+.globl zCondCreate
+# @brief zCondCreate
+# @return %rax (zsr_cond)
+zCondCreate:
+    push %rbp
+    mov %rsp, %rbp
+    sub $0x10, %rsp
+    mov $0x10, %rdi
+    call _Z_alloc
+    movl $0x0, 0x4(%rax)
+    movl $ZSR_HANDLER_COND, 0x0(%rax)
+    mov %rax, -0x8(%rbp)
+    call zMutexCreate
+    mov -0x8(%rbp), %rdi
+    mov %rax, 0x8(%rdi)
+    ret
+
+.globl zCondDestroy
+# @brief zCondDestroy
+# @param %rdi (zsr_cond)
+# @return %rax (bool)
+zCondDestroy:
+    push %rbp
+    mov %rsp, %rbp
+    sub $0x10, %rsp
+    mov %rdi, -0x8(%rbp)
+    mov 0x8(%rdi), %rdi
+    call zMutexIsLock
+    cmp $0x0, %rax
+    je 2f
+1:  mov $ZEBUSY, %edi
+    call zsetlasterror
+    mov $0x0, %rax
+    jmp 3f
+2:  mov -0x8(%rbp), %rdi
+    call zThreadCondSignal
+    mov -0x8(%rbp), %rdi
+    mov 0x8(%rdi), %rdi
+    call zMutexDestroy
+    mov -0x8(%rbp), %rdi
+    call _Z_free
+3:  add $0x10, %rsp
+    pop %rbp
+    ret
+
+.globl zThreadCondWait
+# @brief zThreadCondWait
+# @param %rdi (zsr_cond)
+zThreadCondWait:
+    push %rbp
+    mov %rsp, %rbp
+    sub $0x10, %rsp
+
+    add $0x10, %rsp
     pop %rbp
     ret

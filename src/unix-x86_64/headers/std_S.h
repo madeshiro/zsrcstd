@@ -13,6 +13,7 @@ zsize_t zsrcall _Z_allocs(const void* __p);
 void zsrcall _Z_mcopy(const void* __src, void* __dest, zsize_t __s);
 void zsrcall _Z_mswap(void* __p1, void* __p2, zsize_t __s);
 
-int zsrcall _Z_hndlid(zhandler __hndl);
+int zsrcall  _Z_hndlid(zhandler __hndl);
+void zsrcall _Z_errno(void);
 
 #endif // _Z_Std_S

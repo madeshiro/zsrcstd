@@ -1,6 +1,6 @@
 # Unix x86_64 assembly files
 # @file thread.S - system call
-# @version 2020/11 0.3.0.0002
+# @version 2021/03 0.4.0.0005
 .att_syntax
 .text
 
@@ -304,18 +304,6 @@ zThreadCancel:
 zThreadIsRunning:
     mov 0x1c(%rdi), %ah
     ret
-
-.globl zLockCreate
-.globl zLockDestroy
-.globl zThreadLock
-.globl zThreadUnlock
-.globl zThreadHoldsLock
-
-.globl zCondCreate
-.globl zCondDestroy
-.globl zThreadCondWait
-.globl zThreadCondSignal
-
 
 .globl zThreadSetName
 .globl zThreadGetName

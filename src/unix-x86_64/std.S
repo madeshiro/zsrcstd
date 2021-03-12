@@ -3,6 +3,7 @@
 # @version 2020/11 0.3.0.0002
 .att_syntax
 .text
+.include "zsr_asm_const.S"
 
 #### <<< STDLIB / unix-x86_64 >>> #####
 # > functions declared in `unix-86_64\zsr_std.c` (unix-x86_64 decl)
@@ -67,6 +68,7 @@ _Z_alloc:
     addq $0x8, %rax
     retq
 1: # on failure
+    call _Z_errno
     mov $0x0, %rax
     retq
 
@@ -131,7 +133,12 @@ _Z_realloc:
 _Z_free:
     callq _Z_sys_munmap
     inc %rax
-    retq
+    cmp $0x0, %rax
+    jne 1f
+    mov $ZEINVAL, %edi
+    call zsetlasterror
+    mov $0x0, %rax
+1:  retq
 
 
 # @brief _Z_allocs

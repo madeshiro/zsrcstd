@@ -1,7 +1,49 @@
 /** Unix x86_64 `C` files
  * @file std.c - implementation
- * @version 2020/11 0.3.0.0002
+ * @version 2021/03 0.4.0.0005
  * @author Rin Baudelet (madeshiro)
  */
+#include <errno.h>
 #include "zsr_std.h"
 #include "headers/std_S.h"
+#include "src/zsr_prvt.h"
+
+/**
+ * @brief Translate unix/linux errno into ZLIB errno<br/>
+ * This function is necessary to etablish synchronous errno value between all
+ * supported Operating System.
+ * @since 2021/03 0.4.0.0004
+ * @version 2021/03 0.4.0004 (unix-x86_64 branch)
+ */
+void _Z_errno()
+{
+    int ecode;
+    switch (errno) {
+        case EBUSY:
+            ecode = ZEBUSY;
+            break;
+        case EINVAL:
+            ecode = ZEINVAL;
+            break;
+        case ENOMEM:
+            ecode = ZENOMEM;
+            break;
+        case ENOSYS:
+            ecode = ZENOSYS;
+            break;
+        case EPERM:
+            ecode = ZEPERM;
+            break;
+        case ESRCH:
+            ecode = ZESRCH;
+            break;
+        case ETIMEDOUT:
+            ecode = ZETIMEDOUT;
+            break;
+        case EAGAIN: default:
+            ecode = ZEAGAIN;
+            break;
+    }
+
+    zsetlasterror(ecode);
+}
