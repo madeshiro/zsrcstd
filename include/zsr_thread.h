@@ -32,9 +32,9 @@ extern "C" {
 //  zsrcall zbool zMutexHoldsLock(zsr_mutex lock);
 
     zsrcall zsr_cond zCondCreate();
-    zsrcall zbool zCondDestroy(zsr_cond *cond);
-    zsrcall void  zThreadCondWait(zsr_cond *cond, zsr_mutex* mutex);
-    zsrcall zbool zThreadCondSignal(zsr_cond* cond);
+    zsrcall zbool zCondDestroy(zsr_cond cond);
+    zsrcall void  zThreadCondWait(zsr_cond cond);
+    zsrcall zbool zThreadCondSignal(zsr_cond cond);
 
     zsrcall void zSleep(zlong millis);
     zsrcall void zThreadGetPID();
