@@ -1,6 +1,6 @@
 # Unix x86_64 assembly files
 # @file thread.S - system call
-# @version 2021/03 0.4.0.0005
+# @version 2021/03 0.4.0
 .att_syntax
 .text
 .include "zsr_asm_const.S"

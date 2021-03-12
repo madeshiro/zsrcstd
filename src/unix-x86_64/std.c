@@ -1,6 +1,6 @@
 /** Unix x86_64 `C` files
  * @file std.c - implementation
- * @version 2021/03 0.4.0.0005
+ * @version 2021/03 0.4.0
  * @author Rin Baudelet (madeshiro)
  */
 #include <errno.h>
@@ -12,7 +12,7 @@
  * @brief Translate unix/linux errno into ZLIB errno<br/>
  * This function is necessary to etablish synchronous errno value between all
  * supported Operating System.
- * @since 2021/03 0.4.0.0004
+ * @since 2021/03 0.4.0
  * @version 2021/03 0.4.0004 (unix-x86_64 branch)
  */
 void _Z_errno()

@@ -1,6 +1,6 @@
 # Unix x86_64 assembly files
 # @file socket.S - zsr_list object implementation
-# @version 2021/02 0.4.0.0003
+# @version 2021/02 0.4.0
 .att_syntax # AT&T syntax
 .text
 

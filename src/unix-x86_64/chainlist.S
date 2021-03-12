@@ -1,6 +1,6 @@
 # Unix x86_64 assembly files
 # @file chainlist.S - zsr_chainlist object implementation
-# @version 2020/11 0.3.0.0002
+# @version 2020/11 0.3.0
 .att_syntax # AT&T syntax
 .text
 
