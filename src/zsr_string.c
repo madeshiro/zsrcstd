@@ -1,6 +1,6 @@
 /** global `C` files
  * @file zsr_string.c - implementation
- * @version 2020/11 0.3.0.0002
+ * @version 2020/11 0.3.0
  * @author Rin Baudelet (madeshiro)
  */
 #include "zsr_string.h"

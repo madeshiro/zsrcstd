@@ -1,6 +1,6 @@
 /** global `C` files
  * @file zsr_socket.c - implementation
- * @version 2020/12 0.4.0.0003
+ * @version 2020/12 0.4.0
  * @author Rin Baudelet (madeshiro)
  */
 #include "zsr_socket.h"

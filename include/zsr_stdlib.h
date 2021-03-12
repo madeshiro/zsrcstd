@@ -5,7 +5,7 @@
  * ZaeSora Library -=- Standard C
  *
  * @file zsr_stdlib.h
- * @version 2021/01 0.4.0.0003
+ * @version 2021/01 0.4.0
  * @author Rin Baudelet
  *
  * ----- << OS/SPECIFICATION >> -----

@@ -6,7 +6,11 @@ typedef void* zptr;
 typedef void* zpvoid;
 typedef void* zhandler; /**< Global handler type for ZsrLib's features */
 
-#define ZSR_STDLIB 202103040L //! 2021/03 0.4.0 (R.M.m) .0004 patch
+#define ZSR_STDLIB 202103040L //! 2021/03 0.4.0 (M.m.p) .0005 <build-id>
+#define ZSR_STDLIB_MAJOR        0 // 0
+#define ZSR_STDLIB_MINOR        4 //  .4
+#define ZSR_STDLIB_PATCH        0 //    .0
+#define ZSR_STD_LIB_PR          0 // <- not a pre-release
 
 /*<< ZSR LIB KEYWORD >>*/
 

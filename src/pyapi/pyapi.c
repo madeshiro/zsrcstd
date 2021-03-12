@@ -1,6 +1,6 @@
 /** pyapi `C` files
  * @file pyapi.c - implementation
- * @version 2020/11 0.3.0.0002
+ * @version 2020/11 0.3.0
  * @author Rin Baudelet (madeshiro)
  */
 #include "pyapi/pyapi.h"

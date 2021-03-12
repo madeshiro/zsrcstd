@@ -1,6 +1,6 @@
 # Windows AMD64 assembly files
 # @file thread.S - system call
-# @version 2020/11 0.3.0.0002
+# @version 2020/11 0.3.0
 .att_syntax
 .section ,"r"
 
