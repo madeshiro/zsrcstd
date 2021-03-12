@@ -1,6 +1,6 @@
 /** Unix x86_64 `C` files
  * @file std.c - implementation
- * @version 2021/03 0.4.0
+ * @version 2021/03 0.4.1
  * @author Rin Baudelet (madeshiro)
  */
 #include <errno.h>
@@ -24,6 +24,9 @@ void _Z_errno()
             break;
         case EINVAL:
             ecode = ZEINVAL;
+            break;
+        case ENOLCK:
+            ecode = ZENOLCK;
             break;
         case ENOMEM:
             ecode = ZENOMEM;
