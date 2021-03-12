@@ -103,6 +103,7 @@ typedef zdouble zbigfloat; // biggest float
 #define ZEAGAIN     0x00000010
 #define ZEBUSY      0x00000020
 #define ZEINVAL     0x00000040
+#define ZENOLCK     0x00001000
 #define ZENOMEM     0x00000080
 #define ZENOSYS     0x00000100
 #define ZEPERM      0x00000200

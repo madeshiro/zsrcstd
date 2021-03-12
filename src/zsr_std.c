@@ -4,7 +4,7 @@
 #ifdef ZSR_SYS_WIN64
 #include "win-amd64/headers/std_S.h"
 #elif defined(ZSR_SYS_UNIX64)
-#include "unix-86_64/headers/std_S.h"
+#include "unix-x86_64/headers/std_S.h"
 #endif
 
 int zlasterror(char b, int err)
