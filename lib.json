@@ -10,11 +10,10 @@
   ],
   "version": {
     "date": [2021,3],
-    "release":  0,
-    "major": 4,
-    "minor": 0,
-    "patch": 4,
-    "version": "2021/03 0.4.0.0004"
+    "major": 0,
+    "minor": 4,
+    "patch": 0,
+    "version": "2021/03 0.4.0"
   },
   "standard" : {
     "c": "c11",

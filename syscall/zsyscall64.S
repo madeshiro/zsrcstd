@@ -3,7 +3,7 @@
 # @os Windows 7, 8.1, 10
 # @os UNIX/Kernel system
 # @os GNU Linux (unix-like system)
-# @version 2020/12 0.4.0.0003
+# @version 2020/12 0.4.0
 .att_syntax # AT&T syntax
 .data
 
