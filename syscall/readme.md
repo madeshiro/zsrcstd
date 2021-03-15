@@ -6,6 +6,7 @@
 
 ## Description
 ## Syscall tables `64bit`
+`API VERSION : 0.4.1 (unstable) [sync w/ zsrcstd for now]`
 ```asm
 # file <z64sys.S>
 .att_syntax
@@ -23,12 +24,12 @@ zsyscall
     <thead>
         <th>Name</th>
         <th>rax</th>
-        <th>rdi</th>
-        <th>rsi</th>
-        <th>rdx</th>
-        <th>r8</th>
-        <th>r9</th>
-        <th>r10</th>
+        <th>rdi<br/><code>%xmm0</code></th>
+        <th>rsi<br/><code>%xmm1</code></th>
+        <th>rdx<br/><code>%xmm2</code></th>
+        <th>r8<br/><code>%xmm3</code></th>
+        <th>r9<br/><code>%xmm4</code></th>
+        <th>r10<br/><code>%xmm5</code></th>
         <th>@return rax</th>
         <th>Description</th>
     </thead>
@@ -41,7 +42,7 @@ zsyscall
             <td><code>uint32</code><br/>count</td>
             <td colspan="3"></td>
             <td><code>int32</code><br/>Count of read's chars</td>
-            <td>Open a file with the specified openm</td>
+            <td>Read data from any supported I/O handlers</td>
         </tr>
         <tr>
             <td>write</td>
@@ -51,7 +52,7 @@ zsyscall
             <td><code>uint32</code><br/>count</td>
             <td colspan="3"></td>
             <td><code>int32</code><br/>number of write's chars</td>
-            <td>Close any supported zhandler</td>
+            <td>Write buffers to any supported I/O handler</td>
         </tr>
         <tr>
             <td>fopen</td>
@@ -67,7 +68,23 @@ zsyscall
             <td><code>0x3</code></td>
             <td><code>zhandler</code><br/>a handler to close</td>
             <td colspan="5"></td>
-            <td><code>bool</code><br/>close status (1: succes, 0: error (check errno(<code>0x...</code>))</td>
+            <td><code>bool</code><br/>close status (1: succes, 0: error (check errno(<code>0x5</code>))</td>
+            <td>Close any supported zhandler</td>
+        </tr>
+        <tr>
+            <td>stdio</td>
+            <td><code>0x4</code></td>
+            <td><code>zhandler</code><br/>I/O channel handler</td>
+            <td><code>uint32</code><br/>std channel (0, 1 or 2)</td>
+            <td colspan="4"></td>
+            <td><code>zhandler</code><br/>old std handler</td>
+            <td>Replace a standard I/O channel (in, out, err)</td>
+        </tr>
+        <tr>
+            <td>errno</td>
+            <td><code>0x5</code></td>
+            <td colspan="6"></td>
+            <td><code>uint32</code><br/>latest errcode</td>
             <td>Close any supported zhandler</td>
         </tr>
         <tr>
