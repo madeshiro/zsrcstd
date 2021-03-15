@@ -48,7 +48,7 @@ z64syswcall:
 .globl z64syscall
 z64syscall:
     push %rbx
-    mov __z64syscall_fn, %rbx
+    lea __z64syscall_fn, %rbx
     movq (%rbx, %rax, 8), %rax
     callq *%rax
     pop %rbx
