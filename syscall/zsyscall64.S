@@ -5,10 +5,11 @@
 # @os GNU Linux (unix-like system)
 # @version 2021/03 0.4.1
 .att_syntax # AT&T syntax
+.include "zsr_asm_const.S"
 .data
 
 #### <<< zsyscall / x-platform >>> ####
-# > all functions are aligned with standard `.h` declarations (x-platform decl)
+# > All functions are aligned with syscall tables [64bit]
 #
 # >> REMINDER // 'Zsr' Calling convention [amd64] <<
 # > Syscall : RAX
@@ -16,7 +17,7 @@
 # > Floatings points : %xmm0-%xmm7
 #
 # PREFIX LIST >>
-# - z64sys  : universal (x-platform)  # define in 'zsyscall.h'
+# - z64sys  : universal (x-platform)
 # - z64sysw : windows
 # - z64sysu : unix(-like)
 #
@@ -27,6 +28,8 @@ __z64syscall_fn:
     .quad z64syswrite
     .quad z64sysfopen
     .quad z64sysclose
+    .quad z64sysstdio
+    .quad z64syserrno
 
 .text
 .globl z64syswcall
@@ -54,24 +57,9 @@ z64syscall:
     pop %rbx
     ret
 
-.globl z64sysread
-z64sysread:
-    push %rbp
-    mov %rsp, %rbp
-    sub $0x10, %rsp
-    mov %rdi, -0x8(%rbp)
-    add $0x10, %rsp
-    pop %rbp
-    ret
+### z64sys x-platform functions [0 args] ###
 
-.globl z64syswrite
-z64syswrite:
-    ret
-
-.globl z64sysfopen
-z64sysfopen:
-    ret
-
-.globl z64sysclose
-z64sysclose:
+.globl z64syserrno
+z64syserrno:
+    call zgetlasterror
     ret

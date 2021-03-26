@@ -35,7 +35,7 @@ int zgetlasterror(void)
 zbool zclosehandler(zhandler hndl)
 {
     zbool __status;
-    switch (_Z_hndlid(hndl))
+    switch (((struct __z_handler*) hndl)->hid)
     {
         case ZSR_HANDLER_FILE:
             __status = zfclose(hndl);
@@ -60,4 +60,35 @@ zbool zclosehandler(zhandler hndl)
     if (!__status)
         zsetlasterror(ZEBUSY);
     return __status;
+}
+
+struct __z_hndldata zhndl_data(zphandler hndl, zuint32 offset, zuint32 sizeOf)
+{
+    struct __z_hndldata data;
+    void* p = (&hndl->starting_point_data) + offset;
+    switch (sizeOf)
+    {
+        case sizeof(char):
+            data.__cdata = *((char*)p);
+            break;
+        case sizeof(zint16):
+            data.__16intdata = *((zint16*)p);
+            break;
+        case sizeof(zint32):
+            data.__32intdata = *((zint32*)p);
+            break;
+        case sizeof(zint64):
+            data.__64intdata = *((zint64*)p);
+            break;
+        default:
+            data.__bufdata = zalloc(sizeOf);
+            data.__buflen = sizeOf;
+            for (zuint32 i = 0; i < sizeOf; i++)
+            {
+                data.__bufdata[i] = ((char*)p)[i];
+            }
+            break;
+    }
+
+    return data;
 }

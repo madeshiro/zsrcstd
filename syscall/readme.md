@@ -1,6 +1,6 @@
 # Zsr C Std Library - Syscall #
 > *ZaeSora **C** Standard Library*, **asm** `api`   
-> **zsrsyscall.(a|so)**
+> **zsrsyscall.a** (*static lib*)
 * * *
 *ZaeSora development | **ZsrLibraries** series*
 
@@ -85,7 +85,17 @@ zsyscall
             <td><code>0x5</code></td>
             <td colspan="6"></td>
             <td><code>uint32</code><br/>latest errcode</td>
-            <td>Close any supported zhandler</td>
+            <td>Get latest error code</td>
+        </tr>
+        <tr>
+            <td>alloc</td>
+            <td><code>0x6</code></td>
+            <td><code>size_t</code><br/>sizeof</td>
+            <td><code>flag_t</code><br/>flags</td>
+            <td><code>void*</code><br/>realloc</td>
+            <td colspan="3"></td>
+            <td><code>void*</code><br/>alloc_t</td>
+            <td>Alloc memory</td>
         </tr>
         <tr>
             <td colspan="10"><i>Work in progress...</i></td>

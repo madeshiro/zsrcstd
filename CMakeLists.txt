@@ -188,11 +188,18 @@ elseif (UNIX)
                 src/unix-x86_64/headers/thread_S.h
                 src/unix-x86_64/headers/pipe_S.h
                 src/unix-x86_64/headers/std_S.h
-                src/unix-x86_64/headers/socket_S.h)
+                src/unix-x86_64/headers/socket_S.h
+                )
+
+        set(unix_x64_sysasm
+                syscall/z64sysu.S
+                )
 
         set(ASM ${ASM} ${unix_x64_asm})
         set(SOURCES ${SOURCES} ${unix_x64_src})
         set(HEADERS ${HEADERS} ${unix_x64_headers})
+
+        set(SYSASM ${SYSASM} ${unix_x64_sysasm})
     else()
         message(FATAL_ERROR "Unix 32bit not supported yet !")
     endif()
