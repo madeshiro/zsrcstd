@@ -1,6 +1,6 @@
 # global assembly files
 # @file zsr_asm_const.S - constant
-# @version 2021/03 0.4.0
+# @version 2021/03 0.4.1
 
 .set ZEAGAIN     , 0x00000010
 .set ZEBUSY      , 0x00000020

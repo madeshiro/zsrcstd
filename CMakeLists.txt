@@ -61,7 +61,7 @@ set(SOURCES
         src/zsr_file.c
         src/zsr_socket.c
         src/zsr_std.c
-        syscall/zsyscall.c)
+        )
 
 # GLOBAL HEADERS
 set(HEADERS
@@ -81,7 +81,6 @@ set(HEADERS
         include/zsr_type.h
         include/zsr_math.h
         src/zsr_prvt.h
-        syscall/zsyscall.h
         )
 
 # GLOBAL ASSEMBLY FILES
@@ -89,10 +88,26 @@ set(ASM
         include/zsr_asm_const.S
         )
 
+# ZSR's syscall static-lib SOURCES
+set(SYSSOURCES
+        syscall/zsyscall.c
+        )
+
+# ZSR's syscall static-lib HEADERS
+set(SYSHEADERS
+        syscall/zsyscall.h
+        )
+
+# ZSR's syscall static-lib ASSEMBLY FILES
+set(SYSASM
+        syscall/z64sys.S
+        syscall/zsyscall64.S
+        )
+
 message("\n--- PROJECTS PROPERTIES ---")
 
 set(ZSR_LIB_TARGET zsrcstd)
-
+set(ZSR_SYSLIB_TARGET zsrsyscall)
 
 ### { OS DEFINITIONS } ###
 if (WIN32)
@@ -173,11 +188,18 @@ elseif (UNIX)
                 src/unix-x86_64/headers/thread_S.h
                 src/unix-x86_64/headers/pipe_S.h
                 src/unix-x86_64/headers/std_S.h
-                src/unix-x86_64/headers/socket_S.h)
+                src/unix-x86_64/headers/socket_S.h
+                )
+
+        set(unix_x64_sysasm
+                syscall/z64sysu.S
+                )
 
         set(ASM ${ASM} ${unix_x64_asm})
         set(SOURCES ${SOURCES} ${unix_x64_src})
         set(HEADERS ${HEADERS} ${unix_x64_headers})
+
+        set(SYSASM ${SYSASM} ${unix_x64_sysasm})
     else()
         message(FATAL_ERROR "Unix 32bit not supported yet !")
     endif()
@@ -191,8 +213,12 @@ else()
     add_definitions(-DZSR_LIB_RELEASE)
 endif()
 
-add_library(${ZSR_LIB_TARGET} SHARED ${RC_FILE} ${SOURCES} ${ASM} ${HEADERS})
+add_link_options(-no-pie)
 
+add_library(${ZSR_LIB_TARGET} SHARED ${RC_FILE} ${SOURCES} ${ASM} ${HEADERS})
+add_library(${ZSR_SYSLIB_TARGET} STATIC ${SYSSOURCES} ${SYSASM} ${SYSHEADERS})
+
+target_link_libraries(${ZSR_SYSLIB_TARGET} -lzsrcstd)
 if (UNIX)
     target_link_libraries(${ZSR_LIB_TARGET} m)
 elseif(WIN32)
