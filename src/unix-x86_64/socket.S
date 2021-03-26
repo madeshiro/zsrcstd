@@ -1,10 +1,10 @@
 # Unix x86_64 assembly files
-# @file socket.S - zsr_list object implementation
-# @version 2021/02 0.4.0
+# @file socket.S - zsr_socket object implementation
+# @version 2021/03 0.5.0
 .att_syntax # AT&T syntax
 .text
 
-#### <<< zsr_list / unix-x86_64 >>> ####
+#### <<< zsr_socket / unix-x86_64 >>> ####
 # > all functions are aligned with standard `.h` declarations (x-platform decl)
 #
 # >> REMINDER // Calling convention [amd64] <<
@@ -84,8 +84,17 @@ _Z_sys_shutdown:
     syscall
     ret
 
-.globl _Z_sys_recv
-.globl _Z_sys_send
+.globl _Z_sys_recvfrom
+# @brief _Z_sys_recv
+_Z_sys_recvfrom:
+
+    ret
+
+.globl _Z_sys_sendto
+# @brief _Z_sys_send
+_Z_sys_sendto:
+
+    ret
 
 .globl zsocket
 .globl zclosesock

@@ -290,7 +290,7 @@ zThreadCancel:
     mov $0x9, %edx
     call _Z_sys_tgkill
     mov -0x8(%rbp), %rdi
-    call _zsr_thread_safestop
+    call __zsr_thread_safestop
     movl $0x0, 0x4(%rdi)
     movl $0x9, 0x18(%rdi)
     add $0x1, %eax
