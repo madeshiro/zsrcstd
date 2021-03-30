@@ -90,7 +90,7 @@ set(ASM
 
 # ZSR's syscall static-lib SOURCES
 set(SYSSOURCES
-        syscall/zsyscall.c
+        src/syscall/zsyscall.c
         )
 
 # ZSR's syscall static-lib HEADERS
@@ -100,8 +100,8 @@ set(SYSHEADERS
 
 # ZSR's syscall static-lib ASSEMBLY FILES
 set(SYSASM
-        syscall/z64sys.S
-        syscall/zsyscall64.S
+        src/syscall/z64sys.S
+        src/syscall/zsyscall64.S
         )
 
 message("\n--- PROJECTS PROPERTIES ---")
@@ -192,7 +192,7 @@ elseif (UNIX)
                 )
 
         set(unix_x64_sysasm
-                syscall/z64sysu.S
+                src/syscall/z64sysu.S
                 )
 
         set(ASM ${ASM} ${unix_x64_asm})
