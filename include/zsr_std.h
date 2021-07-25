@@ -27,7 +27,7 @@ typedef __WCHAR_TYPE__  wchar_t;
 typedef char            char8_t;
 typedef __CHAR16_TYPE__ char16_t;
 typedef __CHAR32_TYPE__ char32_t;
-#endif  // c++
+#endif  // __cplusplus
 
 #define ZSUCCESS 0
 #define ZFAILURE -1
@@ -101,7 +101,7 @@ typedef unsigned long     zsize_t;
 typedef zuint32 zbiguint;  // biggest unsigned integer
 typedef zint32 zbigint;    // biggest integer
 typedef zdouble zbigfloat; // biggest float
-#endif // ZSRLIB 64bit
+#endif // ZSRLIB_64
 
 #define zerror zgetlasterror()
 #define ZEAGAIN     0x00000010
@@ -123,7 +123,7 @@ typedef zdouble zbigfloat; // biggest float
 
 #ifdef __cplusplus
 extern "C" {
-#endif // c++
+#endif // __cplusplus
 
     /**
      * @brief Allocate memory
@@ -204,8 +204,14 @@ extern "C" {
      */
     zbool zclosehandler(zhandler hndl);
 
+    /**
+     *
+     * @return
+     */
+    zbool zisLE();
+
 #ifdef __cplusplus
 }
-#endif // c++
+#endif // __cplusplus
 
 #endif //ZSR_STD_H

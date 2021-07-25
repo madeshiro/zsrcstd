@@ -11,7 +11,7 @@ typedef char          utf8_t;
 typedef int           utf32_t;
 
 #if defined(ZSR_SYS_UNIX64) || defined(ZSR_SYS_UNIX32)
-typedef short         utf16_t;
+typedef unsigned short utf16_t;
 #elif defined(ZSR_SYS_WIN32) || defined(ZSR_SYS_WIN64)
 typedef wchar_t     utf16_t;
 #endif // utf16_t

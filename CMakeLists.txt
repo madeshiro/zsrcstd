@@ -61,6 +61,7 @@ set(SOURCES
         src/zsr_file.c
         src/zsr_socket.c
         src/zsr_std.c
+        src/zsr_chencoding.c
         )
 
 # GLOBAL HEADERS
@@ -81,7 +82,7 @@ set(HEADERS
         include/zsr_type.h
         include/zsr_math.h
         src/zsr_prvt.h
-        )
+        include/zsr_chencoding.h)
 
 # GLOBAL ASSEMBLY FILES
 set(ASM

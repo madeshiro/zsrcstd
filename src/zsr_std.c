@@ -92,3 +92,9 @@ struct __z_hndldata zhndl_data(zphandler hndl, zuint32 offset, zuint32 sizeOf)
 
     return data;
 }
+
+zbool zisLE()
+{
+    int __zreserved_n = 1;
+    return (*(char*)&__zreserved_n == 0x1);
+}

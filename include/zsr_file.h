@@ -2,7 +2,7 @@
 #define ZSR_FILE_H
 #include "zsr_stdio.h"
 
-typedef struct _z_file* zsr_file;
+typedef zhandler zsr_file;
 typedef const char* zfmode_t;
 #ifdef ZSR_SYS_UNIX64
     typedef int zfd_t;
@@ -14,49 +14,47 @@ typedef const char* zfmode_t;
 extern "C" {
 #endif // c++
 
-zsrcall struct _z_file* _Z_os_filedesc(int fd);
+zsrcall zhandler _Z_os_filedesc(int fd);
 
 #define zstdin  _Z_os_filedesc(0)
 #define zstdout _Z_os_filedesc(1)
 #define zstderr _Z_os_filedesc(2)
 
     zbool zmkdir(const char* dirname);
-#ifdef WIN32
-    zbool zwmkdir(const wchar_t* dirname);
-#endif
     zbool zrmdir(const char* dirname);
 
     /**
      *
-     * @param fname (const char*) - file's path (relative or absolute)
+     * @param fname (const char*) - file's path (relative or absolute).
      * @param mode (zfmode_t) - mode to use to open the file <br/>
-     * -> <b>"r"</b> = open for reading; If the file does not exist, return NULL <br/>
-     * -> <b>"rb"</b> = Open for reading in binary mode; If the file does not exist,
-     * return NULL <br/>
-     * -> <b>"w"</b> = Open for writing; If the file exists, contents are overwritten,
-     * otherwise, a file will be created <br/>
-     * -> <b>"wb"</b> = Open for writing in binary mode; If the file exists,
-     * contents are overwritten, otherwise, a file will be created <br/>
-     * -> <b>"a"</b> = Open for append; If the file does not exist, it will be created <br/>
-     * -> <b>"ab"</b> = Open for append in binary mode; If the file does not exist, it will
-     * be created <br/>
-     * -> <b>"r+"</b> = Open for both reading and writing; If the file does not exist,
-     * return NULL <br/>
-     * -> <b>"rb+"</b> = Open for both reading and writing in binary mode; If the file does
-     * not exist, return NULL <br/>
-     * -> <b>"w+"</b> = Open for both reading and writing; If the file exists, contents are
-     * overwritten, otherwise, it will be created <br/>
-     * -> <b>"wb+"</b> = Open for both reading and writing in binary mode; If the file
-     * exists, contents are overwritten, otherwise, it will be created <br/>
-     * -> <b>"a+"</b> = Open for both reading and appending; If the file does not exist,
-     * it will be created <br/>
-     * -> <b>"ab+"</b> = Open for both reading and appending in binary mode; If the file
-     * does not exist, it will be created
+     * <ul>
+     * <li><b>"r"</b> = open for reading; If the file does not exist, return NULL</li>
+     * <li><b>"rb"</b> = Open for reading in binary mode; If the file does not exist,
+     * return NULL</li>
+     * <li><b>"w"</b> = Open for writing; If the file exists, contents are overwritten,
+     * otherwise, a file will be created</li>
+     * <li><b>"wb"</b> = Open for writing in binary mode; If the file exists,
+     * contents are overwritten, otherwise, a file will be created</li>
+     * <li><b>"a"</b> = Open for append; If the file does not exist, it will be created</li>
+     * <li><b>"ab"</b> = Open for append in binary mode; If the file does not exist, it will
+     * be created</li>
+     * <li><b>"r+"</b> = Open for both reading and writing; If the file does not exist,
+     * return NULL</li>
+     * <li><b>"rb+"</b> = Open for both reading and writing in binary mode; If the file does
+     * not exist, return NULL</li>
+     * <li><b>"w+"</b> = Open for both reading and writing; If the file exists, contents are
+     * overwritten, otherwise, it will be created</li>
+     * <li><b>"wb+"</b> = Open for both reading and writing in binary mode; If the file
+     * exists, contents are overwritten, otherwise, it will be created</li>
+     * <li><b>"a+"</b> = Open for both reading and appending; If the file does not exist,
+     * it will be created</li>
+     * <li><b>"ab+"</b> = Open for both reading and appending in binary mode; If the file
+     * does not exist, it will be created</li>
+     * </ul>
      *
      * @return the file's handler (zsr_file)
      */
     zsr_file zfopen(const char* fname, zfmode_t mode);
-    zsr_file zfwopen(const wchar_t* fname, zfmode_t mode);
     zbool zfclose(zsr_file file);
     zsrcall zbool zfremove(const char* fname);
     zsrcall zbool zfrename(const char* oldname, const char* newname);
