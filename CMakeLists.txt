@@ -1,5 +1,5 @@
 # Define CMake project's properties
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.19)
 project(ZSRStdLibrary C ASM)
 set(CMAKE_C_STANDARD 11)
 enable_language(ASM)
