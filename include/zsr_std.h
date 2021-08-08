@@ -6,11 +6,24 @@ typedef void* zptr;
 typedef void* zpvoid;
 typedef void* zhandler; /**< Global handler type for ZsrLib's features */
 
-#define ZSR_STDLIB 202103040L //! 2021/03 0.4.0 (M.m.p) .0005 <build-id>
-#define ZSR_STDLIB_MAJOR        0 // 0
-#define ZSR_STDLIB_MINOR        4 //  .4
-#define ZSR_STDLIB_PATCH        0 //    .0
-#define ZSR_STD_LIB_PR          0 // <- not a pre-release
+#define ZSR_STDLIB 202108040L //>! 2021/08 0.4.4 (R.M.m) .0000 <build-id>
+#define ZSR_STDLIB_MAJOR        0    // 0
+#define ZSR_STDLIB_MINOR        4    //  .4
+#define ZSR_STDLIB_PATCH        4    //    .0
+#define ZSR_STDLIB_DP           1    // Development Phase  [0: prototype; 1: alpha; 2: beta; 3: RC, 4: Release]
+#define ZSR_STDLIB_BUILDID      0000 // 0000 [no build]
+
+#ifdef _MSC_BUILD
+#define ZSR_COMPILER_MSC
+
+#   define _Z_mscint(inst) inst
+#   define _Z_gnuint(inst)
+#elif defined(__GNUC__)
+#define ZSR_COMPILER_GNU
+
+#   define _Z_gnuint(inst) inst
+#   define _Z_mscint(inst)
+#endif
 
 /*<< ZSR LIB KEYWORD >>*/
 
@@ -23,10 +36,17 @@ typedef unsigned long zenum;
 typedef unsigned long zflag;
 
 #ifndef __cplusplus
-typedef __WCHAR_TYPE__  wchar_t;
-typedef char            char8_t;
-typedef __CHAR16_TYPE__ char16_t;
-typedef __CHAR32_TYPE__ char32_t;
+#ifdef ZSR_COMPILER_GNU
+    typedef __WCHAR_TYPE__  wchar_t;
+    typedef char            char8_t;
+    typedef __CHAR16_TYPE__ char16_t;
+    typedef __CHAR32_TYPE__ char32_t;
+#else
+    typedef unsigned int    wchar_t;
+    typedef char            char8_t;
+    typedef signed short    char16_t;
+    typedef signed int      char32_t;
+#endif  // ZSR_COMPILER_GNU
 #endif  // __cplusplus
 
 #define ZSUCCESS 0
@@ -130,13 +150,13 @@ extern "C" {
      * @param [in] _size (zsize_t) - The pointer's size to allocate
      * @return A valid pointer on success, Null otherwise
      */
-    zptr zsrcall zalloc(zsize_t _size) __asm__("_Z_alloc");
+    zptr zsrcall zalloc(zsize_t _size) _Z_gnuint(__asm__("_Z_alloc"));
     /**
      * @brief Allocate memory initialised to zero
      * @param [in] _size (zsize_t) - The pointer's size to allocate
      * @return A valid pointer on success, Null otherwise
      */
-    zptr zsrcall zcalloc(zsize_t _size) __asm__("_Z_calloc");
+    zptr zsrcall zcalloc(zsize_t _size) _Z_gnuint(__asm__("_Z_calloc"));
     /**
      * @brief Reallocate memory to a new pointer.
      * @warning Passed _ptr will be free
@@ -144,7 +164,7 @@ extern "C" {
      * @param [in] _size (zsize_t) - The new size to reallocate
      * @return The pointer reallocated to a new memory block
      */
-    zptr zsrcall zrealloc(zptr _ptr, zsize_t _size) __asm__("_Z_realloc");
+    zptr zsrcall zrealloc(zptr _ptr, zsize_t _size) _Z_gnuint(__asm__("_Z_realloc"));
     /**
      * @brief Delete a pointer (free memory).
      * @param [in] _ptr (void*) - Pointer to release
@@ -164,20 +184,20 @@ extern "C" {
      * @param dest
      * @param _size
      */
-    void zsrcall zmcopy(const void* src, void* dest, zsize_t _size) __asm__("_Z_mcopy");
+    void zsrcall zmcopy(const void* src, void* dest, zsize_t _size) _Z_gnuint(__asm__("_Z_mcopy"));
 
     /**
      *
      * @param _ptr1
      * @param _ptr2
      */
-    void zsrcall zmswap(zptr _ptr1, zptr _ptr2, zsize_t _size) __asm__("_Z_mswap");
+    void zsrcall zmswap(zptr _ptr1, zptr _ptr2, zsize_t _size) _Z_gnuint(__asm__("_Z_mswap"));
 
     /**
      * @brief Exit the process
      * @param status (int) - Status' code of how the program ended
      */
-    void zsrcall zexit(int status) __asm__("_Z_exit");
+    void zsrcall zexit(int status) _Z_gnuint(__asm__("_Z_exit"));
 
     /**
      *

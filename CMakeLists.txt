@@ -1,8 +1,11 @@
 # Define CMake project's properties
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.16)
 project(ZSRStdLibrary C ASM)
 set(CMAKE_C_STANDARD 11)
 enable_language(ASM)
+
+# Resolve error concerning 'MultiThreadDll' for MSVC
+set(CMAKE_MSVC_RUNTIME_LIBRARY "")
 
 message("--- OS/SYSTEM CONFIGURATION --- \n> PROCESSOR-TYPE: " ${CMAKE_SYSTEM_PROCESSOR}
         "\n> SYSTEM-NAME: " ${CMAKE_SYSTEM_NAME})
@@ -107,8 +110,8 @@ set(SYSASM
 
 message("\n--- PROJECTS PROPERTIES ---")
 
-set(ZSR_LIB_TARGET zsrcstd)
-set(ZSR_SYSLIB_TARGET zsrsyscall)
+set(ZSR_LIB_TARGET zsrcstd${ZSR_BUILD_SUFFIX})
+set(ZSR_SYSLIB_TARGET zsrsyscall${ZSR_BUILD_SUFFIX})
 
 ### { OS DEFINITIONS } ###
 if (WIN32)
@@ -116,7 +119,7 @@ if (WIN32)
     set(RC_FILE resources.rc)
     # DEFINITIONS
     message("> Enable GAS/ASM language ${ZSR_SYS_ARCH}bit")
-    message("> MinGW ${ZSR_SYS_ARCH}bit configuration enabled")
+    message("> ${ZSR_SYS_ARCH}bit configuration enabled")
     add_definitions(
             -DZSR_SYS_WIN${ZSR_SYS_ARCH}
     )
@@ -157,7 +160,7 @@ if (WIN32)
 elseif (UNIX)
     # DEFINITIONS
     message("> Enable GAS/ASM language ${ZSR_SYS_ARCH}bit")
-    message("> MinGW ${ZSR_SYS_ARCH}bit configuration enabled")
+    message("> ${ZSR_SYS_ARCH}bit configuration enabled")
     add_definitions(
             -DZSR_SYS_UNIX${ZSR_SYS_ARCH}
             -DUNIX64

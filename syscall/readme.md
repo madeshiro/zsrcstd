@@ -6,7 +6,7 @@
 
 ## Description
 ## Syscall tables `64bit`
-`API VERSION : 0.4.1 (unstable) [sync w/ zsrcstd for now]`
+`API VERSION : 0.4.4 (alpha) [sync w/ zsrcstd for now]`
 ```asm
 # file <z64sys.S>
 .att_syntax
