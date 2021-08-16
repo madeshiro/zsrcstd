@@ -4,6 +4,15 @@
 void zsetlasterror(int err);
 int zlasterror(char b, int err);
 
+#ifdef ZSR_SYS_UNIX64
+#define __z_defhndl() \
+    zint32 hid, __r1align8, it, __r2align8
+#elif defined(ZSR_SYS_WIN64)
+#define __z_defhndl() \
+    zint32 hid, __r1align8; \
+    zpvoid it
+#endif
+
 typedef struct __z_handler zrhandler, * zphandler;
 struct __z_handler
 {
@@ -29,16 +38,21 @@ struct __z_handler
 
 struct __z_hndldata
 {
-    char* __bufdata;
-    zuint64 __buflen;
+    zpvoid __ptrdata;
+    zuint32 __sizeof;
 
     zint64 __64intdata;
     zint32 __32intdata;
     zint16 __16intdata;
     char __cdata;
-
 };
 
+/**
+ * @param hndl
+ * @param offset
+ * @param sizeOf
+ * @return
+ */
 struct __z_hndldata zhndl_data(zphandler hndl, zuint32 offset, zuint32 sizeOf);
 
 #endif // ZSR_PRVT_H

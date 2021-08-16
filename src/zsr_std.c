@@ -80,15 +80,16 @@ struct __z_hndldata zhndl_data(zphandler hndl, zuint32 offset, zuint32 sizeOf)
         case sizeof(zint64):
             data.__64intdata = *((zint64*)p);
             break;
-        default:
-            data.__bufdata = zalloc(sizeOf);
-            data.__buflen = sizeOf;
-            for (zuint32 i = 0; i < sizeOf; i++)
-            {
-                data.__bufdata[i] = ((char*)p)[i];
-            }
-            break;
     }
 
+    data.__ptrdata = p;
+    data.__sizeof = sizeOf;
+
     return data;
+}
+
+zbool zisLE()
+{
+    int __zreserved_n = 1;
+    return (*(char*)&__zreserved_n == 0x1);
 }

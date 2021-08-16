@@ -1,8 +1,11 @@
 # Define CMake project's properties
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.16)
 project(ZSRStdLibrary C ASM)
 set(CMAKE_C_STANDARD 11)
 enable_language(ASM)
+
+# Resolve error concerning 'MultiThreadDll' for MSVC
+set(CMAKE_MSVC_RUNTIME_LIBRARY "")
 
 message("--- OS/SYSTEM CONFIGURATION --- \n> PROCESSOR-TYPE: " ${CMAKE_SYSTEM_PROCESSOR}
         "\n> SYSTEM-NAME: " ${CMAKE_SYSTEM_NAME})
@@ -61,6 +64,7 @@ set(SOURCES
         src/zsr_file.c
         src/zsr_socket.c
         src/zsr_std.c
+        src/zsr_chencoding.c
         )
 
 # GLOBAL HEADERS
@@ -81,7 +85,7 @@ set(HEADERS
         include/zsr_type.h
         include/zsr_math.h
         src/zsr_prvt.h
-        )
+        include/zsr_chencoding.h)
 
 # GLOBAL ASSEMBLY FILES
 set(ASM
@@ -90,7 +94,7 @@ set(ASM
 
 # ZSR's syscall static-lib SOURCES
 set(SYSSOURCES
-        syscall/zsyscall.c
+        src/syscall/zsyscall.c
         )
 
 # ZSR's syscall static-lib HEADERS
@@ -100,14 +104,14 @@ set(SYSHEADERS
 
 # ZSR's syscall static-lib ASSEMBLY FILES
 set(SYSASM
-        syscall/z64sys.S
-        syscall/zsyscall64.S
+        src/syscall/z64sys.S
+        src/syscall/zsyscall64.S
         )
 
 message("\n--- PROJECTS PROPERTIES ---")
 
-set(ZSR_LIB_TARGET zsrcstd)
-set(ZSR_SYSLIB_TARGET zsrsyscall)
+set(ZSR_LIB_TARGET zsrcstd${ZSR_BUILD_SUFFIX})
+set(ZSR_SYSLIB_TARGET zsrsyscall${ZSR_BUILD_SUFFIX})
 
 ### { OS DEFINITIONS } ###
 if (WIN32)
@@ -115,7 +119,7 @@ if (WIN32)
     set(RC_FILE resources.rc)
     # DEFINITIONS
     message("> Enable GAS/ASM language ${ZSR_SYS_ARCH}bit")
-    message("> MinGW ${ZSR_SYS_ARCH}bit configuration enabled")
+    message("> ${ZSR_SYS_ARCH}bit configuration enabled")
     add_definitions(
             -DZSR_SYS_WIN${ZSR_SYS_ARCH}
     )
@@ -156,7 +160,7 @@ if (WIN32)
 elseif (UNIX)
     # DEFINITIONS
     message("> Enable GAS/ASM language ${ZSR_SYS_ARCH}bit")
-    message("> MinGW ${ZSR_SYS_ARCH}bit configuration enabled")
+    message("> ${ZSR_SYS_ARCH}bit configuration enabled")
     add_definitions(
             -DZSR_SYS_UNIX${ZSR_SYS_ARCH}
             -DUNIX64
@@ -192,7 +196,7 @@ elseif (UNIX)
                 )
 
         set(unix_x64_sysasm
-                syscall/z64sysu.S
+                src/syscall/z64sysu.S
                 )
 
         set(ASM ${ASM} ${unix_x64_asm})

@@ -3,7 +3,7 @@
 # @os Windows 7, 8.1, 10
 # @os UNIX/Kernel system
 # @os GNU Linux (unix-like system)
-# @version 2021/03 0.4.1
+# @version 2021/08 0.1.0
 .macro zsyscall
 call z64syscall
 .endm

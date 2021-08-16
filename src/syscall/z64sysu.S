@@ -2,7 +2,7 @@
 # @file z64sysu.S - syscall
 # @os UNIX/Kernel system
 # @os GNU Linux (unix-like system)
-# @version 2021/03 0.4.1
+# @version 2021/08 0.1.0
 .att_syntax # AT&T syntax
 .include "zsr_asm_const.S"
 .include "z64sys.S"

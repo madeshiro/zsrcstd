@@ -1,7 +1,7 @@
 {
-  "id": "zsrcstd",
-  "name": "Std Library (C)",
-  "plang" : ["C", "ASM", "python"],
+  "id": "zsrsyscall",
+  "name": "Syscall Library (ASM/C)",
+  "plang" : ["ASM", "C"],
   "author": ["Rin Baudelet"],
   "os": [
     {"name":"Windows 10","arch": 64},
@@ -11,15 +11,14 @@
   "version": {
     "date": [2021,8],
     "release": 0,
-    "major": 4,
+    "major": 1,
     "minor": 0,
-    "dp": "alpha",
-    "version": "2021/08 0.4.0 'alpha-b0000'"
+    "dp": "prototype",
+    "version": "2021/08 0.1.0 'prototype'"
   },
   "standard" : {
     "c": "c11",
-    "asm": "GAS AT&T",
-    "python": "3"
+    "asm": "GAS AT&T"
   },
-  "dependencies": []
+  "dependencies": ["zsrcstd"]
 }
