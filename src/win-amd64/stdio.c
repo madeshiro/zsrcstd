@@ -104,13 +104,13 @@ void zwprintf(const wchar_t* _wf, ...)
 
 HANDLE _Z_winapi_open(const char* __fname, zflag __openmode, zbool __create)
 {
-    DWORD dwDesiredAccess = (__openmode & Z_IO_OPENM_IN ? GENERIC_READ : 0) |
-                            (__openmode & Z_IO_OPENM_OUT ? GENERIC_WRITE : 0),
+    DWORD dwDesiredAccess = (__openmode & ZSR_IO_OPENM_IN ? GENERIC_READ : 0) |
+                            (__openmode & ZSR_IO_OPENM_OUT ? GENERIC_WRITE : 0),
           dwShareMode = 0x0,
           dwCreationDisposition,
           dwFlagsAndAttributes = 0x0;
 
-    if (__openmode & Z_IO_OPENM_TRUNC)
+    if (__openmode & ZSR_IO_OPENM_TRUNC)
     {
         dwCreationDisposition = TRUNCATE_EXISTING;
     }
@@ -126,13 +126,13 @@ HANDLE _Z_winapi_open(const char* __fname, zflag __openmode, zbool __create)
 
 HANDLE _Z_winapi_Wopen(const wchar_t* __fname, zflag __openmode, zbool __create)
 {
-    DWORD dwDesiredAccess = (__openmode & Z_IO_OPENM_IN ? GENERIC_READ : 0) |
-                            (__openmode & Z_IO_OPENM_OUT ? GENERIC_WRITE : 0),
+    DWORD dwDesiredAccess = (__openmode & ZSR_IO_OPENM_IN ? GENERIC_READ : 0) |
+                            (__openmode & ZSR_IO_OPENM_OUT ? GENERIC_WRITE : 0),
             dwShareMode = 0x0,
             dwCreationDisposition,
             dwFlagsAndAttributes = 0x0;
 
-    if (__openmode & Z_IO_OPENM_TRUNC)
+    if (__openmode & ZSR_IO_OPENM_TRUNC)
     {
         dwCreationDisposition = TRUNCATE_EXISTING;
     }
@@ -308,7 +308,7 @@ zlong zfseek(zsr_file file, long offset, int whence)
 
 zlong zftell(zsr_file file)
 {
-    return _Z_winapi_setfileptr(file->fd, 0, Z_SEEK_CUR);
+    return _Z_winapi_setfileptr(file->fd, 0, ZSR_SEEK_CUR);
 }
 
 zbool zfremove(const char* name)

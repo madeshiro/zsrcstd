@@ -98,17 +98,17 @@ void zwprintf(const wchar_t* _f, ...)
 zfd_t _Z_unix_open(const char* fname, zflag openm, zbool create)
 {
     zenum flags = create ? O_CREAT : 0x0;
-    flags |= Z_IO_OPENM_TRUNC & openm ? O_TRUNC : 0x0;
-    flags |= Z_IO_OPENM_APP & openm ? O_APPEND : 0x0;
-    if ((openm & (Z_IO_OPENM_IN | Z_IO_OPENM_OUT)) == (Z_IO_OPENM_IN|Z_IO_OPENM_OUT))
+    flags |= ZSR_IO_OPENM_TRUNC & openm ? O_TRUNC : 0x0;
+    flags |= ZSR_IO_OPENM_APP & openm ? O_APPEND : 0x0;
+    if ((openm & (ZSR_IO_OPENM_IN | ZSR_IO_OPENM_OUT)) == (ZSR_IO_OPENM_IN | ZSR_IO_OPENM_OUT))
     {
         flags |= O_RDWR;
     }
-    else if (openm & Z_IO_OPENM_OUT)
+    else if (openm & ZSR_IO_OPENM_OUT)
     {
         flags |= O_WRONLY;
     }
-    else if (!(openm & Z_IO_OPENM_IN))
+    else if (!(openm & ZSR_IO_OPENM_IN))
     {
         return -1;
     }
@@ -279,5 +279,5 @@ zlong zfseek(zsr_file file, long offset, int whence)
 
 zlong zftell(zsr_file file)
 {
-    return _Z_sys_lseek(file->fd, 0, Z_SEEK_CUR);
+    return _Z_sys_lseek(file->fd, 0, ZSR_SEEK_CUR);
 }
