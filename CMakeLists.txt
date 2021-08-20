@@ -84,7 +84,7 @@ set(HEADERS
         include/zsr_format.h
         include/zsr_type.h
         include/zsr_math.h
-        src/zsr_prvt.h
+        src/zsr_xapi.h
         include/zsr_chencoding.h)
 
 # GLOBAL ASSEMBLY FILES

@@ -1,6 +1,6 @@
 #include <src/unix-x86_64/headers/std_S.h>
 #include "zsr_std.h"
-#include "zsr_prvt.h"
+#include "zsr_xapi.h"
 #ifdef ZSR_SYS_WIN64
 #include "win-amd64/headers/std_S.h"
 #elif defined(ZSR_SYS_UNIX64)
