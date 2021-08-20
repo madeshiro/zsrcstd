@@ -99,7 +99,7 @@ set(SYSSOURCES
 
 # ZSR's syscall static-lib HEADERS
 set(SYSHEADERS
-        syscall/zsyscall.h
+        include/syscall/zsyscall.h
         )
 
 # ZSR's syscall static-lib ASSEMBLY FILES

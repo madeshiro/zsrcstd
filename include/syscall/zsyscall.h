@@ -23,6 +23,7 @@
 #define     ZSYS_FOPEN  0x00000202 // 0b0000.0000,0000.0000,0000.0010,0000.0010
 #define     ZSYS_FCLOSE 0x00000203 // etc...
 #else
+#warning "undefined syscall 32bit"
 #endif
 #ifdef __cplusplus
 extern "C" {

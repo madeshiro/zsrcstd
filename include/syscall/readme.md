@@ -98,6 +98,22 @@ zsyscall
             <td>Alloc memory</td>
         </tr>
         <tr>
+            <td>free</td>
+            <td><code>0x7</code></td>
+            <td><code>void*</code><br/>ptr</td>
+            <td colspan="5"></td>
+            <td><code>bool</code><br/></td>
+            <td>Release memory</td>
+        </tr>
+        <tr>
+            <td>exit</td>
+            <td><code>0x8</code></td>
+            <td><code>int</code><br/>exit code</td>
+            <td colspan="5"></td>
+            <td><code>void</code><br/></td>
+            <td>Stop the program</td>
+        </tr>
+        <tr>
             <td colspan="10"><i>Work in progress...</i></td>
         </tr>
     </tbody>
