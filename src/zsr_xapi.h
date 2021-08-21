@@ -77,7 +77,7 @@ struct __z_hndldata
  */
 struct __z_hndldata zhndl_data(zphandler hndl, zuint32 offset, zuint32 sizeOf);
 
-/* >>> essential x-platform API <<< */
+/* >>> system & memory x-platform API <<< */
 // {
 #ifdef __cplusplus
 extern "C" {
@@ -169,5 +169,88 @@ extern "C" {
 };
 #endif // __cplusplus
 // } # stdio/file
+/* >>> thread x-platform API <<< */
+// {
 
+#ifdef ZSRLIB_64
+#define ZSR_THREAD_STACKSIZE  0x800000  // 8Mio
+#elif defined(ZSRLIB_32)
+#define ZSR_THREAD_STACKSIZE  0x400000  // 4Mio
+#endif // ZSRLIB_64
+
+typedef struct __z_hndl_thread ZRHTHREAD /* rvalue */, *ZHTHREAD;
+struct __z_hndl_thread
+{
+    __z_defhndl();
+    char* thname;                   /**< (32/64bits) thread's name */
+    /**
+     *
+     * @param args
+     * @return
+     */
+    int (*entrypoint)(void* args);  /**< (32/64bits) thread's entry point   */
+    void* stacks;                   /**< (64bits) thread's memory stack     */
+    int exitcode;                   /**< (32bits) thread's exit code        */
+    zbool running;                  /**< (16bits) running status            */
+};
+
+typedef struct __z_hndl_futex ZRHFUTEX /* rvalue */, *ZHFUTEX;
+struct __z_hndl_futex
+{
+    __z_defhndl();
+    zbool __lock;
+};
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
+    zsrcall ZHTHREAD __z_xapi_thcreate(int (*startAddr)(void*));
+    zsrcall zbool    __z_xapi_thclose(ZHTHREAD);
+    zsrcall zbool    __z_xapi_thrun(ZHTHREAD, void*);
+    zsrcall int      __z_xapi_thjoin(ZHTHREAD);
+    zsrcall zbool    __z_xapi_thabort(ZHTHREAD, int _exit);
+
+    zsrcall void __z_xapi_sleep(long millis);
+
+    zsrcall ZHFUTEX __z_xapi_thmutex();
+    zsrcall zbool   __z_xapi_thclosemutex(ZHFUTEX);
+    zsrcall long    __z_xapi_thlock(ZHFUTEX);
+    zsrcall zbool   __z_xapi_thunlock(ZHFUTEX);
+#ifdef __cplusplus
+};
+#endif // __cplusplus
+// } # thread
+/* >>> stdio/file x-platform API <<< */
+// {
+
+typedef struct __z_fdt_pipe *ZHPIPEFD_T;
+struct __z_fdt_pipe
+{
+    zfd_t in, out;
+};
+
+typedef struct __z_hndl_pipe ZRHPIPE /* rvalue */, *ZHPIPE;
+struct __z_hndl_pipe
+{
+    __z_defhndl();
+    char* name; /**< (32/64bits) Pipe's name; Null if it's an anonymous pipe */
+};
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
+    zsrcall ZHPIPE __z_xapi_pipe(zflag openm);
+    zsrcall ZHPIPE __z_xapi_fifo(const char*, zflag openm);
+    zsrcall zbool  __z_xapi_closepipe(ZHPIPE);
+    zsrcall int    __z_xapi_pread(char* _Z_out, zulong, ZHPIPE);
+    zsrcall int    __z_xapi_pwrite(const char*, zulong, ZHPIPE);
+    zsrcall zfd_t  __z_xapi_pfd(zflag which);
+    zsrcall int    __z_xapi_pfileno(zflag which);
+
+#ifdef __cplusplus
+};
+#endif // __cplusplus
+// } # stdio/file
 #endif // ZSR_PRVT_H
