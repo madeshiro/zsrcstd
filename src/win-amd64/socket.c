@@ -6,7 +6,7 @@
 #include "zsr_socket.h"
 #include "headers/socket_S.h"
 #include <ws2tcpip.h>
-#include "../zsr_prvt.h"
+#include "../zsr_xapi.h"
 
 zbool zWSAInit(WSADATA * _Z_out pWsaData)
 {

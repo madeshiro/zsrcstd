@@ -6,23 +6,48 @@ typedef void* zptr;
 typedef void* zpvoid;
 typedef void* zhandler; /**< Global handler type for ZsrLib's features */
 
-#define ZSR_STDLIB 202108040L //>! 2021/08 0.4.4 (R.M.m) .0000 <build-id>
-#define ZSR_STDLIB_MAJOR        0    // 0
-#define ZSR_STDLIB_MINOR        4    //  .4
-#define ZSR_STDLIB_PATCH        4    //    .0
-#define ZSR_STDLIB_DP           1    // Development Phase  [0: prototype; 1: alpha; 2: beta; 3: RC, 4: Release]
+#ifdef ZSR_SYS_UNIX64
+typedef int zfd_t;
+#elif defined(ZSR_SYS_WIN64)
+typedef void* zfd_t;
+#endif
+
+#define ZSR_STDLIB 202109050L //>! 2021/09 0.5.0 (R.M.m) .0000 <build-id>
+#define ZSR_STDLIB_RELEASE      0    // 0
+#define ZSR_STDLIB_MAJOR        5    //  .5
+#define ZSR_STDLIB_MINOR        0    //    .0
+#define ZSR_STDLIB_DP           0    // Development Phase
+                                     // [0: prototype; 1: alpha; 2: beta; 3: RC, 4: Release]
 #define ZSR_STDLIB_BUILDID      0000 // 0000 [no build]
+
+struct
+{
+    int release,
+        major,
+        minor,
+        buildid,
+        development_phase;
+} zsrcstd = {
+        ZSR_STDLIB_RELEASE, ZSR_STDLIB_MAJOR, ZSR_STDLIB_MINOR,
+        ZSR_STDLIB_BUILDID,ZSR_STDLIB_DP
+}, *pzsrcstd = &zsrcstd;
 
 #ifdef _MSC_BUILD
 #define ZSR_COMPILER_MSC
 
 #   define _Z_mscint(inst) inst
 #   define _Z_gnuint(inst)
+#   define _Z_xapieq(alias)
 #elif defined(__GNUC__)
 #define ZSR_COMPILER_GNU
 
 #   define _Z_gnuint(inst) inst
 #   define _Z_mscint(inst)
+/**
+ * Uses to call directly a x-platform valid declared function from the X/API;
+ * @note Works only with GNU compiler (and alikes). MSC has to call an intermediate function.
+ */
+#   define _Z_xapieq(alias) _Z_gnuint(__asm__("__z_xapi" alias))
 #endif
 
 /*<< ZSR LIB KEYWORD >>*/
@@ -84,10 +109,18 @@ typedef unsigned short     zuint16;
 typedef unsigned int       zuint32;
 typedef unsigned long long zuint64;
 
+#ifdef ZSR_COMPILER_GNU
 typedef __builtin_va_list zva_list;
 #define zva_start(l, arg) __builtin_va_start(l, arg)
 #define zva_end(l) __builtin_va_end(l)
 #define zva_arg(l, type) __builtin_va_arg(l,type)
+#elif defined(ZSR_COMPILER_MSC)
+typedef char* zva_list;
+#define zva_start(l, arg) __crt_va_start(l, arg)
+#define zva_end(l) __crt_va_end(l)
+#define zva_arg(l, type) __crt_va_arg(l,type)
+#endif
+
 
 #ifdef UNICODE
 typedef wchar_t zchar_t;
@@ -141,6 +174,14 @@ typedef zdouble zbigfloat; // biggest float
 #define ZSR_HANDLER_MUTEX  0x00000081
 #define ZSR_HANDLER_COND   0x00000082
 
+#define ZSR_SYSINFO_LANG        //!
+#define ZSR_SYSINFO_LOCALE      //!
+#define ZSR_SYSINFO_OSNAME      //!
+#define ZSR_SYSINFO_TOTALRAM    //! Total usable memory size
+#define ZSR_SYSINFO_FREERAM     //! Available memory size
+#define ZSR_SYSINFO_UPTIME      //! Seconds since boot
+#define ZSR_SYSINFO_MEMUSAGE    //! Gets program's memory size usage
+
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
@@ -150,13 +191,13 @@ extern "C" {
      * @param [in] _size (zsize_t) - The pointer's size to allocate
      * @return A valid pointer on success, Null otherwise
      */
-    zptr zsrcall zalloc(zsize_t _size) _Z_gnuint(__asm__("_Z_alloc"));
+    zptr zalloc(zsize_t _size);
     /**
      * @brief Allocate memory initialised to zero
      * @param [in] _size (zsize_t) - The pointer's size to allocate
      * @return A valid pointer on success, Null otherwise
      */
-    zptr zsrcall zcalloc(zsize_t _size) _Z_gnuint(__asm__("_Z_calloc"));
+    zptr zcalloc(zsize_t _size);
     /**
      * @brief Reallocate memory to a new pointer.
      * @warning Passed _ptr will be free
@@ -164,19 +205,19 @@ extern "C" {
      * @param [in] _size (zsize_t) - The new size to reallocate
      * @return The pointer reallocated to a new memory block
      */
-    zptr zsrcall zrealloc(zptr _ptr, zsize_t _size) _Z_gnuint(__asm__("_Z_realloc"));
+    zptr zrealloc(zptr _ptr, zsize_t _size);
     /**
      * @brief Delete a pointer (free memory).
      * @param [in] _ptr (void*) - Pointer to release
      * @return True on success, False otherwise.
      */
-    zbool zsrcall zfree(void* _ptr) __asm__("_Z_free");
+    zbool zsrcall zfree(void* _ptr) _Z_gnuint(__asm__("__z_xapi_free"));
     /**
      * @brief Get pointer size.
      * @param _ptr (const void*) - The pointer to get the size of
      * @return The pointer size
      */
-    zsize_t zsrcall zallocs(const void* _ptr) __asm__("_Z_allocs");
+    zsize_t zsrcall zallocs(const void* _ptr) _Z_gnuint(__asm__("__z_xapi_memsize"));
 
     /**
      *
@@ -184,20 +225,20 @@ extern "C" {
      * @param dest
      * @param _size
      */
-    void zsrcall zmcopy(const void* src, void* dest, zsize_t _size) _Z_gnuint(__asm__("_Z_mcopy"));
+    void zsrcall zmcopy(const void* src, void* dest, zsize_t _size);
 
     /**
      *
      * @param _ptr1
      * @param _ptr2
      */
-    void zsrcall zmswap(zptr _ptr1, zptr _ptr2, zsize_t _size) _Z_gnuint(__asm__("_Z_mswap"));
+    void zsrcall zmswap(zptr _ptr1, zptr _ptr2, zsize_t _size);
 
     /**
      * @brief Exit the process
      * @param status (int) - Status' code of how the program ended
      */
-    void zsrcall zexit(int status) _Z_gnuint(__asm__("_Z_exit"));
+    void zsrcall zexit(int status) _Z_gnuint(__asm__("__z_xapi_exit"));
 
     /**
      *
@@ -216,7 +257,7 @@ extern "C" {
      * </ul>
      * @param hndl (zhandler) - the handler to close
      * @return True if the handler has been successfuly closed. False otherwise. <br/>
-     * If false, check <b>zgetlasterror()</b> for more details :
+     * @errors If false, check <b>zgetlasterror()</b> for more details :
      * <ul>
      *  <li><b>ZEINVAL</b> Invalid handler (not supported)</li>
      *  <li><b>ZEBUSY</b> Handler busy (e.g: thread running, mutex in use...)

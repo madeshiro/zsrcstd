@@ -1,11 +1,21 @@
 #include <src/unix-x86_64/headers/std_S.h>
 #include "zsr_std.h"
-#include "zsr_prvt.h"
+#include "zsr_xapi.h"
 #ifdef ZSR_SYS_WIN64
 #include "win-amd64/headers/std_S.h"
 #elif defined(ZSR_SYS_UNIX64)
 #include "unix-x86_64/headers/std_S.h"
 #endif
+
+zptr zalloc(zsize_t _size)
+{
+    return __z_xapi_alloc(_size, zfalse);
+}
+
+zptr zcalloc(zsize_t _size)
+{
+    return __z_xapi_alloc(_size, ztrue);
+}
 
 int zlasterror(char b, int err)
 {
@@ -44,13 +54,13 @@ zbool zclosehandler(zhandler hndl)
             __status = zclosesock(hndl);
             break;
         case ZSR_HANDLER_THREAD:
-            __status = zThreadDestroy(hndl);
+            // __status = zThreadDestroy(hndl);
             break;
         case ZSR_HANDLER_MUTEX:
-            __status = zMutexDestroy(hndl);
+            // __status = zMutexDestroy(hndl);
             break;
         case ZSR_HANDLER_COND:
-            __status = zCondDestroy(hndl);
+            // __status = zCondDestroy(hndl);
             break;
         default:
             zsetlasterror(ZEINVAL);

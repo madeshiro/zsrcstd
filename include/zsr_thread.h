@@ -3,46 +3,25 @@
 #include "zsr_std.h"
 #include "zsr_string.h"
 
-typedef void* zsr_thread;
-typedef void* zsr_mutex;
-typedef void* zsr_cond;
+typedef zhandler zsr_thread;
+typedef zhandler zsr_mutex;
+typedef zhandler zsr_cond;
 typedef zdword (*zthread_f)(void*);
 
-#define Z_MUTEX_LOCKSUCCESS 0x0
-#define Z_MUTEX_LOCKTIMEOUT 0x1
-#define Z_MUTEX_LOCKFAILED 0xffffffff
-#define Z_MUTEX_INVALID 0xe0
+#define ZSR_MUTEX_LOCKSUCCESS   0x0
+#define ZSR_MUTEX_LOCKTIMEOUT   0x1
+#define ZSR_MUTEX_LOCKFAILED    0xffffffff
+#define ZSR_MUTEX_INVALID       0xe0
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    zsrcall zsr_thread zThreadCreate(zthread_f startAddr);
-    zsrcall zbool zThreadDestroy(zsr_thread thread);
-
-    zsrcall void zThreadStart(zsr_thread thread, void* params);
-    zsrcall int  zThreadJoin(zsr_thread thread);
-    zsrcall zbool zThreadCancel(zsr_thread thread);
-    zsrcall zbool zThreadIsRunning(zsr_thread thread);
-
-    zsrcall zsr_mutex zMutexCreate();
-    zsrcall zbool zMutexDestroy(zsr_mutex lock);
-    zsrcall zbool zMutexLock(zsr_mutex lock);
-    zsrcall zbool zMutexUnlock(zsr_mutex lock);
-
-    zsrcall zsr_cond zCondCreate();
-    zsrcall zbool zCondDestroy(zsr_cond cond);
-    zsrcall zbool zThreadCondWait(zsr_cond cond, zsr_mutex mutex);
-    zsrcall zlong zThreadCondSignal(zsr_cond cond);
-
-    zsrcall void   zSleep(zlong millis);
-    zsrcall zulong zThreadGetPID();
-    zsrcall void   zThreadSleep(zlong millis);
-    zsrcall void   zThreadNanoSleep(zlong millis, zlong nano);
-
-    zsrcall void zThreadSetName(zsr_thread thread, const zsr_string name);
-    zsrcall const char* zThreadGetName(zsr_thread thread);
-    zsrcall zulong zThreadTID(zsr_thread thread);
+    zsr_thread zthcreate(zthread_f startAddr)   _Z_xapieq("thcreate");
+    zbool      zthclose(zsr_thread th)          _Z_xapieq("thclose");
+    zbool      zthrun(zsr_thread th, void*)     _Z_xapieq("thrun");
+    int        zthjoin(zsr_thread th)           _Z_xapieq("thjoin");
+    zbool      zthstop(zsr_thread th, int code) _Z_xapieq("thabort");
 
 #ifdef __cplusplus
 };

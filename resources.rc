@@ -1,8 +1,8 @@
 #include <windows.h>
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION 0,4,0,0001
-PRODUCTVERSION 0,4,0,0001
+FILEVERSION 0,5,0,0001
+PRODUCTVERSION 0,5,0,0001
 FILEFLAGSMASK 0x3fl
 FILEOS VOS_NT_WINDOWS32
 
@@ -27,12 +27,12 @@ BEGIN
     BEGIN
         VALUE "CompanyName", L"ZaeSora\0"
         VALUE "FileDescription", "C Std library, ZsrLibraries serie (" RCF_BIT "bit)\0"
-        VALUE "FileVersion", "0.4.0.0001\0"
+        VALUE "FileVersion", "0.5.0.0001\0"
         VALUE "InternalName", "ZsrStdLibrary\0"
         VALUE "LegalCopyright", "Copyright (C) Rin Baudelet, All rights reserved\0"
         VALUE "OriginalFilename", RCF_ORIGINALFILENAME RCF_D ".dll\0"
         VALUE "ProductName", "ZSR Std C Library\0"
-        VALUE "ProductVersion", "0.4.0.0001\0"
+        VALUE "ProductVersion", "0.5.0.0001\0"
     END
     END
     BLOCK "VarFileInfo"
