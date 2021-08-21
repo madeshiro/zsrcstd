@@ -7,6 +7,16 @@
 #include "unix-x86_64/headers/std_S.h"
 #endif
 
+zptr zalloc(zsize_t _size)
+{
+    return __z_xapi_alloc(_size, zfalse);
+}
+
+zptr zcalloc(zsize_t _size)
+{
+    return __z_xapi_alloc(_size, ztrue);
+}
+
 int zlasterror(char b, int err)
 {
     static int lastError = 0;
@@ -44,13 +54,13 @@ zbool zclosehandler(zhandler hndl)
             __status = zclosesock(hndl);
             break;
         case ZSR_HANDLER_THREAD:
-            __status = zThreadDestroy(hndl);
+            // __status = zThreadDestroy(hndl);
             break;
         case ZSR_HANDLER_MUTEX:
-            __status = zMutexDestroy(hndl);
+            // __status = zMutexDestroy(hndl);
             break;
         case ZSR_HANDLER_COND:
-            __status = zCondDestroy(hndl);
+            // __status = zCondDestroy(hndl);
             break;
         default:
             zsetlasterror(ZEINVAL);

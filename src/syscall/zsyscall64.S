@@ -30,6 +30,11 @@ __z64syscall_fn:
     .quad z64sysclose
     .quad z64sysstdio
     .quad z64syserrno
+    .quad z64sysalloc
+    .quad z64sysfree
+    .quad z64sysexit
+    .quad z64sysdup
+    .quad z64sysdup2
 
 .text
 .globl z64syswcall

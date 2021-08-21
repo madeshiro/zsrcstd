@@ -21,6 +21,20 @@
 extern "C" {
 #endif // c++
 
+    enum zsr_special_char
+    {
+        ZSR_CC_EOF = 0xff,
+        ZSR_CC_EOS = '\0',
+        ZSR_CC_CR = '\r',
+        ZSR_CC_LF = '\n',
+        ZSR_CC_CRLF = 0x0d0a,
+#ifdef ZSR_SYS_WIN64
+        ZSR_CC_NEWLINE = ZSR_CC_CRLF
+#elif defined(ZSR_SYS_UNIX64)
+        ZSR_CC_NEWLINE = ZSR_CC_LF
+#endif
+    };
+
     void zprintc(char _c);
     void zprint(const char* _str);
     void zprintln(const char* _str);

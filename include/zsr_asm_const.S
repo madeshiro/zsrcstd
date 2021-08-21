@@ -1,6 +1,6 @@
 # global assembly files
 # @file zsr_asm_const.S - constant
-# @version 2021/03 0.4.1
+# @version 2021/08 0.5.0
 
 .set ZEAGAIN     , 0x00000010
 .set ZEBUSY      , 0x00000020
@@ -25,3 +25,17 @@
 .set ZCOND_BUSY , 0x1
 .set ZCOND_FREE , 0x0
 
+.set ZSR_IO_OPENM_IN    , 0x1
+.set ZSR_IO_OPENM_OUT   , 0x2
+.set ZSR_IO_OPENM_APP   , 0x4
+.set ZSR_IO_OPENM_ATE   , 0x8
+.set ZSR_IO_OPENM_BIN   , 0x10
+.set ZSR_IO_OPENM_TRUNC , 0x20
+
+.set ZSR_IO_STDIN  , 0x0
+.set ZSR_IO_STDOUT , 0x1
+.set ZSR_IO_STDERR , 0x2
+
+.set ZSR_SEEK_SET , 0
+.set ZSR_SEEK_CUR , 1
+.set ZSR_SEEK_END , 2

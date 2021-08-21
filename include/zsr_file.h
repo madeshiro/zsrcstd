@@ -1,27 +1,25 @@
 #ifndef ZSR_FILE_H
 #define ZSR_FILE_H
 #include "zsr_stdio.h"
+#include "zsr_chencoding.h"
 
-typedef zhandler zsr_file;
+typedef zhandler zsr_file, zfile;
 typedef const char* zfmode_t;
-#ifdef ZSR_SYS_UNIX64
-    typedef int zfd_t;
-#elif defined(ZSR_SYS_WIN64)
-    typedef void* zfd_t;
-#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif // c++
 
-zsrcall zhandler _Z_os_filedesc(int fd);
+    zsr_file zstdfile(int fd);
 
-#define zstdin  _Z_os_filedesc(0)
-#define zstdout _Z_os_filedesc(1)
-#define zstderr _Z_os_filedesc(2)
+#ifndef ZSR_DEFINED_STDFILENO
+#   define zstdin  zstdfile(ZSR_IO_STDIN)
+#   define zstdout zstdfile(ZSR_IO_STDOUT)
+#   define zstderr zstdfile(ZSR_IO_STDERR)
+#endif // ZSR_DEFINED_STDFILENO
 
-    zbool zmkdir(const char* dirname);
-    zbool zrmdir(const char* dirname);
+    zbool zmkdir(const char* dirname) _Z_xapieq("mkdir");
+    zbool zrmdir(const char* dirname) _Z_xapieq("rmdir");
 
     /**
      *
@@ -54,39 +52,59 @@ zsrcall zhandler _Z_os_filedesc(int fd);
      *
      * @return the file's handler (zsr_file)
      */
-    zsr_file zfopen(const char* fname, zfmode_t mode);
-    zbool zfclose(zsr_file file);
-    zsrcall zbool zfremove(const char* fname);
-    zsrcall zbool zfrename(const char* oldname, const char* newname);
+     zsr_file zfopen(const char* fname, zfmode_t mode);
+     /**
+      *
+      * @param file
+      * @return
+      */
+     zsrcall zbool zfclose(zsr_file file)                              _Z_xapieq("fclose");
+     /**
+      *
+      * @param fname
+      * @return
+      */
+     zsrcall zbool zfremove(const char* fname)                         _Z_xapieq("fremove");
+     zsrcall zbool zfrename(const char* oldname, const char* newname)  _Z_xapieq("frename");
 
     // FILE INPUT //
-    zsrcall char zfgetch(zsr_file file);
-    zsrcall zlong zfread(char* _Z_out buf, zulong len, zsr_file file);
-    zsrcall zlong zfreadln(char** _Z_out buf, zsr_file file);
+     char zfgetch(zsr_file file);
+     zlong zfread(char* _Z_out buf, zulong len, zsr_file file)  _Z_xapieq("fread");
+     zlong zfreadln(char** _Z_out buf, zsr_file file);
 
-    zsrcall wchar_t zwfgetch(zsr_file file);
-    zsrcall zlong zwfread(wchar_t* _Z_out buf, zulong len, zsr_file file);
-    zsrcall zlong zwfreadln(wchar_t** _Z_out buf, zsr_file file);
+     wchar_t zwfgetch(zsr_file file);
+     zlong zwfread(wchar_t* _Z_out buf, zulong len, zsr_file file);
+     zlong zwfreadln(wchar_t** _Z_out buf, zsr_file file);
 
     // FILE OUTPUT //
-    zsrcall zlong zfput(char c, zsr_file file);
-    zsrcall zlong zfputs(const char* str, zsr_file file);
-    zsrcall zlong zfprintf(const char* _format, zsr_file file, ...);
-    zsrcall zlong zfprintln(const char* str, zsr_file file);
-    // TODO zfscanf (windows&unix)
-    // zsrcall zlong zfscanf(const char* _format, zsr_file file, ...);
-    zsrcall zlong zfwrite(const char* buf, zulong len, zsr_file file);
-    zsrcall zlong zfwriteln(const char* buf, zulong len, zsr_file file);
+     zlong zfput(char c, zsr_file file);
+     zlong zfputs(const char* str, zsr_file file);
+     zlong zfprintf(const char* _format, zsr_file file, ...);
+     zlong zfprintln(const char* str, zsr_file file);
+     zlong zfscanf(const char* _format, zsr_file file, ...);
+     zlong zfwrite(const char* buf, zulong len, zsr_file file);
+     zlong zfwriteln(const char* buf, zulong len, zsr_file file);
 
-    zsrcall zlong zwfput(wchar_t c, zsr_file file);
-    zsrcall zlong zwfputs(const wchar_t* str, zsr_file file);
-    zsrcall zlong zwfprintf(const wchar_t* _format, zsr_file file, ...);
-    zsrcall zlong zwfprintln(const wchar_t* _format, zsr_file file);
-    // zsrcall zlong zwfscanf(const wchar_t* _format, zsr_file file, ...);
-    zsrcall zlong zwfwrite(const wchar_t* buf, zulong len, zsr_file file);
-    zsrcall zlong zwfwriteln(const wchar_t* buf, zulong len, zsr_file file);
+     zlong zwfput(wchar_t c, zsr_file file);
+     zlong zwfputs(const wchar_t* str, zsr_file file);
+     zlong zwfprintf(const wchar_t* _format, zsr_file file, ...);
+     zlong zwfprintln(const wchar_t* _format, zsr_file file);
+     zlong zwfscanf(const wchar_t* _format, zsr_file file, ...);
+     zlong zwfwrite(const wchar_t* buf, zulong len, zsr_file file);
+     zlong zwfwriteln(const wchar_t* buf, zulong len, zsr_file file);
 
     //*> FILE MANAGEMENT <*//
+
+    void zfccnl(short cc, zsr_file file);
+    short zfgetccnl(zsr_file file);
+    /**
+     * Looks at the entire file to analyze which charsequence is used to indicate a new line.<br/>
+     * The function will put back the cursor at its initial position.
+     * @warning Make sure the file is open with read access, otherwise, the function will returned -1 (EOF)
+     * @param file (zsr_file) - The file to look at
+     * @return The return line's control char if succeed, EOF otherwise.
+     */
+    enum zsr_special_char zflookccnl(zsr_file file);
 
     /**
      *
@@ -95,24 +113,24 @@ zsrcall zhandler _Z_os_filedesc(int fd);
      * @param whence
      * @return
      */
-    zsrcall zlong zfseek(zsr_file file, long offset, int whence);
+     zlong zfseek(zsr_file file, long offset, int whence);
     /**
      *
      * @param file
      * @return
      */
-    zsrcall zlong zftell(zsr_file file);
+     zlong zftell(zsr_file file);
 
     zfd_t zfgetfd(zsr_file file);
-    const void* zfgetname(zsr_file file);
+    int   zfileno(zsr_file file);
+    const char* zfgetname(zsr_file file);
+    enum zch_encoding zfgetchencode(zsr_file file);
+    void zfsetchencode(zsr_file file);
 
-    //> OS SPECIFICITY <//
-#if defined(ZSR_SYS_WIN64) || defined(ZSR_SYS_WIN32)
-
-#elif defined(ZSR_SYS_UNIX64)
-
-#endif // ZSR_SYS_%os%
-
+    const char* zflistfiles(const char* dir, int* _Z_out c);
+    const char* zflistdir(const char* dir, int* _Z_out c);
+    const char* zwflistfiles(const wchar_t* dir, int* _Z_out c);
+    const char* zwflistdir(const wchar_t * dir, int* _Z_out c);
 
 #ifdef __cplusplus
 };
