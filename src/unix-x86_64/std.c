@@ -1,21 +1,21 @@
 /** Unix x86_64 `C` files
  * @file std.c - implementation
- * @version 2021/03 0.4.1
+ * @version 2021/09 0.5.0
  * @author Rin Baudelet (madeshiro)
  */
 #include <errno.h>
 #include "zsr_std.h"
 #include "headers/std_S.h"
-#include "src/zsr_prvt.h"
+#include "src/zsr_xapi.h"
 
 /**
  * @brief Translate unix/linux errno into ZLIB errno<br/>
  * This function is necessary to etablish synchronous errno value between all
  * supported Operating System.
  * @since 2021/03 0.4.0
- * @version 2021/03 0.4.0004 (unix-x86_64 branch)
+ * @version 2021/09 0.5.0 (unix-x86_64 branch)
  */
-void _Z_errno()
+void __zu64_errno()
 {
     int ecode;
     switch (errno) {

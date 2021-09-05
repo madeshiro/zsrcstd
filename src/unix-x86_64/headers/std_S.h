@@ -2,18 +2,31 @@
 #define _Z_Std_S
 #include "zsr_std.h"
 
-/* <<< define ASM HEADER >>> */
+#define zS_IRWXA 00777
 
-void* zsrcall   _Z_alloc(zsize_t __size);
-void* zsrcall   _Z_calloc(zsize_t __size);
-void* zsrcall   _Z_realloc(void* __p, zsize_t __size);
-int   zsrcall   _Z_free(const void* __p);
-zsize_t zsrcall _Z_allocs(const void* __p);
+#define zS_IRUSR 00400
+#define zS_IWUSR 00200
+#define zS_IXUSR 00100
+#define zS_IRWXU 00700
 
-void zsrcall _Z_mcopy(const void* __src, void* __dest, zsize_t __s);
-void zsrcall _Z_mswap(void* __p1, void* __p2, zsize_t __s);
+#define zS_IRGRP 00040
+#define zS_IWGRP 00020
+#define zS_IXGRP 00010
+#define zS_IRWXG 00070
 
-int zsrcall  _Z_hndlid(zhandler __hndl);
-void zsrcall _Z_errno(void);
+#define zS_IROTH 00004
+#define zS_IWOTH 00002
+#define zS_IXOTH 00001
+#define zS_IRWXO 00007
+
+#ifdef __cplusplus
+extern "C" {
+#endif // c++
+
+    void __zu64_errno();
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif // _Z_Std_S

@@ -1,283 +1,132 @@
 /** Unix x86_64 `C` files
  * @file stdio.c - implementation
- * @version 2020/11 0.3.0
+ * @version 2021/09 0.5.0
  * @author Rin Baudelet (madeshiro)
  */
-#include "zsr_std.h"
-#include "zsr_locale.h"
-#include "zsr_string.h"
-#include "zsr_format.h"
-#include "headers/stdio_S.h"
 #include <sys/file.h>
+#include "zsr_std.h"
+#include "headers/std_S.h"
+#include "headers/stdio_S.h"
+#include "headers/syscall_S.h"
 
-zsrcall struct _z_file* _Z_os_filedesc(int fd)
+zfd_t __z_xapi_stdio(int fd)
 {
-    static struct _z_file _Z_stdin = {"stdin", 0};
-    static struct _z_file _Z_stdout = {"stdout", 1};
-    static struct _z_file _Z_stderr = {"stderr", 2};
     switch (fd)
     {
-        case 0:
-            return &_Z_stdin;
-        case 1:
-            return &_Z_stdout;
-        case 2:
-            return &_Z_stderr;
+        case ZSR_IO_STDIN:
+            return __z_os_stdio_fileno.stdin;
+        case ZSR_IO_STDOUT:
+            return __z_os_stdio_fileno.stdout;
+        case ZSR_IO_STDERR:
+            return __z_os_stdio_fileno.stderr;
         default:
-            return znull;
+            return -1;
     }
 }
 
-void zprintc(char _c)
+int __zu64_dup2_(int fd1, int fd2, zbool* __dx)
 {
-    _Z_sys_write(&_c, 1ul, 1);
-}
-
-void zprintln(const char* _str)
-{
-    _Z_sys_write(_str, zstrlen(_str), 1);
-    _Z_sys_write("\n", 1ul, 1);
-}
-
-void zprint(const char* _str)
-{
-    _Z_sys_write(_str, zstrlen(_str), 1);
-}
-
-void zprintf(const char* _f, ...)
-{
-    zva_list valist;
-    zva_start(valist, _f);
-    zprint(zformatl(_f, valist));
-    zva_end(valist);
-}
-
-int zreadc()
-{
-    int c = 0; char b;
-    do {
-        _Z_sys_read(&b, 1ul, 0);
-        c <<= 8;
-        c |= b;
-    } while (b & 0x80);
-    return c;
-}
-
-int zread(char* _buf,  zuint32 _len)
-{
-    return _Z_sys_read(_buf, _len, 0);
-}
-
-void zwprint(const wchar_t* _wstr)
-{
-    zulong _size;
-    char* _buf = utf32toutf8((const utf32_t *) _wstr, &_size);
-    _Z_sys_write(_buf, _size,1);
-}
-
-void zwprintc(wchar_t c)
-{
-    wchar_t wchar[2] = {c, L'\0'};
-    zwprint(wchar);
-}
-
-void zwprintln(const wchar_t* _wstr)
-{
-    zwprint(_wstr);
-    _Z_sys_write("\n", 1ul, 1);
-}
-
-void zwprintf(const wchar_t* _f, ...)
-{
-    zva_list valist;
-    zva_start(valist, _f);
-    zwprint(zwformatl(_f, valist));
-    zva_end(valist);
-}
-
-zfd_t _Z_unix_open(const char* fname, zflag openm, zbool create)
-{
-    zenum flags = create ? O_CREAT : 0x0;
-    flags |= ZSR_IO_OPENM_TRUNC & openm ? O_TRUNC : 0x0;
-    flags |= ZSR_IO_OPENM_APP & openm ? O_APPEND : 0x0;
-    if ((openm & (ZSR_IO_OPENM_IN | ZSR_IO_OPENM_OUT)) == (ZSR_IO_OPENM_IN | ZSR_IO_OPENM_OUT))
+    *__dx = ztrue;
+    if (fd1 == __z_os_stdio_fileno.stdin)
     {
-        flags |= O_RDWR;
+        if (__z_os_stdio_fileno.dup_stdin == -1 && fd1 == ZSR_IO_STDIN)
+            __z_os_stdio_fileno.dup_stdin = __z_xapi_dup(fd1);
+        __z_os_stdio_fileno.stdin = __z_syscall2(ZU64SYS_DUP2, fd1, fd2);
+        return __z_os_stdio_fileno.stdin;
     }
-    else if (openm & ZSR_IO_OPENM_OUT)
+    else if (fd1 == __z_os_stdio_fileno.stdout)
     {
-        flags |= O_WRONLY;
+        if (__z_os_stdio_fileno.stdout == -1 && fd1 == ZSR_IO_STDOUT)
+            __z_os_stdio_fileno.dup_stdout = __z_xapi_dup(fd1);
+        __z_os_stdio_fileno.stdout = __z_syscall2(ZU64SYS_DUP2, fd1, fd2);
+        return __z_os_stdio_fileno.stdout;
     }
-    else if (!(openm & ZSR_IO_OPENM_IN))
+    else if (fd1 == __z_os_stdio_fileno.stderr)
     {
+        if (__z_os_stdio_fileno.stderr == -1 && fd1 == ZSR_IO_STDERR)
+            __z_os_stdio_fileno.dup_stderr = __z_xapi_dup(fd1);
+        __z_os_stdio_fileno.stderr = __z_syscall2(ZU64SYS_DUP2, fd1, fd2);
+        return __z_os_stdio_fileno.stderr;
+    }
+    else
+    {
+        *__dx = zfalse;
         return -1;
     }
-
-    return _Z_sys_open(fname, flags, 0777);
 }
 
-zbool zfremove(const char* fname)
+int __z_xapi_stdiosrc(int fd)
 {
-    return _Z_sys_unlink(fname) == 0;
-}
-
-zbool zfrename(const char* oldname, const char* newname)
-{
-    return _Z_sys_link(oldname, newname);
-}
-
-char zfgetch(zsr_file file)
-{
-    char c;
-    _Z_sys_read(&c, 1, file->fd);
-    return c;
-}
-
-zlong zfread(char* _Z_out buf, zulong len, zsr_file file)
-{
-    return _Z_sys_read(buf, len, file->fd);
-}
-
-zlong zfreadln(char** _Z_out buf, zsr_file file)
-{
-    zlong size = 16, i;
-    *buf = zalloc(sizeof(char)*16);
-    (*buf)[15] = '\0';
-
-    char c;
-    for (i=0; (c=zfgetch(file)) != '\n' && c != -1; i++)
+    switch (fd)
     {
-        if (i == (size-1))
-        {
-            *buf = zrealloc(*buf, sizeof(char) * (size+=16));
-        }
+        case ZSR_IO_STDIN:
+            return __z_os_stdio_fileno.dup_stdin == -1 ? __z_os_stdio_fileno.stdin : __z_os_stdio_fileno.dup_stdin;
+        case ZSR_IO_STDOUT:
+            return __z_os_stdio_fileno.dup_stdout == -1 ? __z_os_stdio_fileno.stdout : __z_os_stdio_fileno.dup_stdout;
+        case ZSR_IO_STDERR:
+            return __z_os_stdio_fileno.dup_stderr == -1 ? __z_os_stdio_fileno.stderr : __z_os_stdio_fileno.dup_stderr;
+        default:
+            zsetlasterror(ZEINVAL);
+            return -1;
+    }
+}
 
-        (*buf)[i] = c;
+int __z_xapi_stdioback(int channel)
+{
+    int fd = -1, *fileno, *dup_fileno;
+    switch (channel)
+    {
+        case ZSR_IO_STDIN:
+            fileno = &__z_os_stdio_fileno.stdin;
+            dup_fileno = &__z_os_stdio_fileno.dup_stdin;
+            break;
+        case ZSR_IO_STDOUT:
+            fileno = &__z_os_stdio_fileno.stdout;
+            dup_fileno = &__z_os_stdio_fileno.dup_stdout;
+            break;
+        case ZSR_IO_STDERR:
+            fileno = &__z_os_stdio_fileno.stderr;
+            dup_fileno = &__z_os_stdio_fileno.dup_stderr;
+            break;
+        default:
+            zsetlasterror(ZEINVAL);
+            return -1;
     }
 
-    return i;
-}
 
-wchar_t zwfgetch(zsr_file file)
-{
-    wchar_t wchar;
-    _Z_sys_read((char*) &wchar, 4, file->fd);
-    return wchar;
-}
 
-zlong zwfread(wchar_t* _Z_out buf, zulong len, zsr_file file)
-{
-    return _Z_sys_read((char*)buf, len*sizeof(wchar_t), file->fd);
-}
-
-zlong zwfreadln(wchar_t** _Z_out buf, zsr_file file)
-{
-    zlong size = 16, i;
-    *buf = zalloc(sizeof(wchar_t)*16);
-    (*buf)[15] = '\0';
-
-    char c;
-    for (i=0; (c=zwfgetch(file)) != '\n'; i++)
+    if (*dup_fileno != -1)
     {
-        if (i == (size-1))
-        {
-            *buf = zrealloc(*buf, sizeof(wchar_t) * (size+=16));
-        }
-
-        (*buf)[i] = c;
+        fd = __z_xapi_dup(*fileno);
+        *fileno = __z_xapi_dup2(*fileno, *dup_fileno);
+        *dup_fileno = -1;
+    }
+    else
+    {
+        zsetlasterror(ZEAGAIN); // the channel is already back to its normal value
     }
 
-    return i;
+    return fd;
 }
 
-zlong zfput(char c, zsr_file file)
+zfd_t __z_xapi_fopen(const char* name, zflag openm, zbool creat)
 {
-    return _Z_sys_write(&c, 1, file->fd);
-}
+    int mode = 0, flags = 0;
+    if (creat)
+    {
+        flags |= O_CREAT;
+        mode = zS_IRWXA;
+    }
 
-zlong zfputs(const char* str, zsr_file file)
-{
-    return _Z_sys_write(str, zstrlen(str), file->fd);
-}
+    if ((openm & ZSR_IO_OPENM_IN) && (openm & ZSR_IO_OPENM_OUT))
+        flags |= O_RDWR;
+    else if (openm & ZSR_IO_OPENM_OUT)
+        flags |= O_WRONLY;
+    else if (openm & ZSR_IO_OPENM_IN)
+        flags |= O_RDONLY;
 
-zlong zfprintf(const char* _format, zsr_file file, ...)
-{
-    zva_list valist;
-    zva_start(valist, file);
+    flags |= openm & ZSR_IO_OPENM_TRUNC ? O_TRUNC : 0;
+    flags |= openm & ZSR_IO_OPENM_APP ? O_APPEND : 0;
 
-    char* str = zformatl(_format, valist);
-    zulong strlen = zstrlen(str);
-    zlong ret = _Z_sys_write(str, strlen, file->fd);
-    zfree(str);
-
-    zva_end(valist);
-    return ret;
-}
-
-zlong zfprintln(const char* str, zsr_file file)
-{
-    return zfwriteln(str, zstrlen(str), file);
-}
-
-zlong zfwrite(const char* buf, zulong len, zsr_file file)
-{
-    return _Z_sys_write(buf, len, file->fd);
-}
-
-zlong zfwriteln(const char* buf, zulong len, zsr_file file)
-{
-    zlong ret = _Z_sys_write(buf, len, file->fd);
-    _Z_sys_write("\r\n", 2, file->fd);
-    return ret;
-}
-
-zlong zwfput(wchar_t c, zsr_file file)
-{
-    return _Z_sys_write((char*)&c, 4, file->fd) / 4;
-}
-
-zlong zwfputs(const wchar_t* str, zsr_file file)
-{
-    return _Z_sys_write((const char*) str, zwstrlen(str)*4ul, file->fd) / 4l;
-}
-
-zlong zwfprintf(const wchar_t* _format, zsr_file file, ...)
-{
-    zva_list valist;
-    zva_start(valist, file);
-
-    wchar_t* str = zwformatl(_format, valist);
-    zulong strlen = zwstrlen(str);
-    zlong ret = _Z_sys_write((const char*)str, 4ul*zwstrlen(str), file->fd) / 4;
-    zfree(str);
-
-    zva_end(valist);
-    return ret;
-}
-
-zlong zwfprintln(const wchar_t* str, zsr_file file)
-{
-    return zwfwriteln(str, zwstrlen(str), file);
-}
-
-zlong zwfwrite(const wchar_t* buf, zulong len, zsr_file file)
-{
-    return _Z_sys_write((const char*)buf, len*4ul, file->fd);
-}
-
-zlong zwfwriteln(const wchar_t* buf, zulong len, zsr_file file)
-{
-    zlong ret = _Z_sys_write((const char*)buf, len*sizeof(wchar_t), file->fd);
-    _Z_sys_write((const char*)L"\r\n", 2*sizeof(wchar_t), file->fd);
-    return ret;
-}
-
-zlong zfseek(zsr_file file, long offset, int whence)
-{
-    return _Z_sys_lseek(file->fd, offset, whence);
-}
-
-zlong zftell(zsr_file file)
-{
-    return _Z_sys_lseek(file->fd, 0, ZSR_SEEK_CUR);
+    return __z_syscall3(ZU64SYS_OPEN, name, flags, mode);
 }

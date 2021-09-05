@@ -1,5 +1,5 @@
 # Define CMake project's properties
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.16.3)
 project(ZSRStdLibrary C ASM)
 set(CMAKE_C_STANDARD 11)
 enable_language(ASM)
@@ -7,6 +7,9 @@ enable_language(ASM)
 # Resolve error concerning 'MultiThreadDll' for MSVC
 set(CMAKE_MSVC_RUNTIME_LIBRARY "")
 
+message("--- CMAKE ---")
+message("> version: ${CMAKE_VERSION}")
+message("> minimum required version: ${CMAKE_MINIMUM_REQUIRED_VERSION}")
 message("--- OS/SYSTEM CONFIGURATION --- \n> PROCESSOR-TYPE: " ${CMAKE_SYSTEM_PROCESSOR}
         "\n> SYSTEM-NAME: " ${CMAKE_SYSTEM_NAME})
 if((${ARCH} EQUAL 64) OR ((NOT DEFINED ARCH) AND ("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "(64)+")))
@@ -108,7 +111,7 @@ set(SYSASM
         src/syscall/zsyscall64.S
         )
 
-message("\n--- PROJECTS PROPERTIES ---")
+message("--- PROJECTS PROPERTIES ---")
 
 set(ZSR_LIB_TARGET zsrcstd${ZSR_BUILD_SUFFIX})
 set(ZSR_SYSLIB_TARGET zsrsyscall${ZSR_BUILD_SUFFIX})
@@ -177,6 +180,7 @@ elseif (UNIX)
                 src/unix-x86_64/string.S
                 src/unix-x86_64/socket.S
                 src/unix-x86_64/pipe.S
+                src/unix-x86_64/syscall64.S
                 )
 
         set(unix_x64_src
@@ -193,6 +197,7 @@ elseif (UNIX)
                 src/unix-x86_64/headers/pipe_S.h
                 src/unix-x86_64/headers/std_S.h
                 src/unix-x86_64/headers/socket_S.h
+                src/unix-x86_64/headers/syscall_S.h
                 )
 
         set(unix_x64_sysasm
@@ -217,7 +222,7 @@ else()
     add_definitions(-DZSR_LIB_RELEASE)
 endif()
 
-add_link_options(-no-pie)
+# add_link_options(-no-pie)
 
 add_library(${ZSR_LIB_TARGET} SHARED ${RC_FILE} ${SOURCES} ${ASM} ${HEADERS})
 add_library(${ZSR_SYSLIB_TARGET} STATIC ${SYSSOURCES} ${SYSASM} ${SYSHEADERS})

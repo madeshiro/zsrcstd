@@ -1,6 +1,6 @@
 # Unix x86_64 assembly files
 # @file stdio.S - system call
-# @version 2021/08 0.5.0
+# @version 2021/09 0.5.0
 .att_syntax
 .text
 
@@ -13,46 +13,46 @@
 #
 # //
 
-.globl _Z_sys64_call0
-.globl _Z_sys64_call1
-.globl _Z_sys64_call2
-.globl _Z_sys64_call3
-.globl _Z_sys64_call4
-.globl _Z_sys64_call5
-.globl _Z_sys64_call6
+.globl __z_syscall0
+.globl __z_syscall1
+.globl __z_syscall2
+.globl __z_syscall3
+.globl __z_syscall4
+.globl __z_syscall5
+.globl __z_syscall6
 
-_Z_sys64_call0:
-    mov %rdi, %rax
+__z_syscall0:
+    mov %edi, %eax
     syscall
     ret
-_Z_sys64_call1:
-    mov %rdi, %rax
+__z_syscall1:
+    mov %edi, %eax
     mov %rsi, %rdi
     syscall
     ret
-_Z_sys64_call2:
-    mov %rdi, %rax
+__z_syscall2:
+    mov %edi, %eax
     mov %rsi, %rdi
     mov %rdx, %rsi
     syscall
     ret
-_Z_sys64_call3:
-    mov %rdi, %rax
+__z_syscall3:
+    mov %edi, %eax
     mov %rsi, %rdi
     mov %rdx, %rsi
     mov %rcx, %rdx
     syscall
     ret
-_Z_sys64_call4:
-    mov %rdi, %rax
+__z_syscall4:
+    mov %edi, %eax
     mov %rsi, %rdi
     mov %rdx, %rsi
     mov %rcx, %rdx
     mov %r8, %r10
     syscall
     ret
-_Z_sys64_call5:
-    mov %rdi, %rax
+__z_syscall5:
+    mov %edi, %eax
     mov %rsi, %rdi
     mov %rdx, %rsi
     mov %rcx, %rdx
@@ -60,8 +60,8 @@ _Z_sys64_call5:
     mov %r9, %r8
     syscall
     ret
-_Z_sys64_call6:
-    mov %rdi, %rax
+__z_syscall6:
+    mov %edi, %eax
     mov %rsi, %rdi
     mov %rdx, %rsi
     mov %rcx, %rdx
@@ -71,301 +71,116 @@ _Z_sys64_call6:
     syscall
     ret
 
-.globl _Z_sys64_read
-.globl _Z_sys64_write
-.globl _Z_sys64_open
-.globl _Z_sys64_close
-.globl _Z_sys64_stat
-.globl _Z_sys64_fstat
-.globl _Z_sys64_lstat
-.globl _Z_sys64_poll
-.globl _Z_sys64_lseek
-.globl _Z_sys64_mmap
-.globl _Z_sys64_mprotect
-.globl _Z_sys64_munmap
-.globl _Z_sys64_brk
-.globl _Z_sys64_rt_sigaction
-.globl _Z_sys64_rt_sigprocmask
-.globl _Z_sys64_sigreturn
-.globl _Z_sys64_ioctl
-.globl _Z_sys64_pread64
-.globl _Z_sys64_pwrite64
-.globl _Z_sys64_readv
-.globl _Z_sys64_writev
-.globl _Z_sys64_access
-.globl _Z_sys64_pipe
-.globl _Z_sys64_select
-.globl _Z_sys64_sched_yield
-.globl _Z_sys64_mremap
-.globl _Z_sys64_msync
-.globl _Z_sys64_mincore
-.globl _Z_sys64_madvise
-.globl _Z_sys64_shmget
-.globl _Z_sys64_shmat
-.globl _Z_sys64_shmctl
-.globl _Z_sys64_dup
-.globl _Z_sys64_dup2
-.globl _Z_sys64_pause
-.globl _Z_sys64_nanosleep
-.globl _Z_sys64_getitimer
-.globl _Z_sys64_alarm
-.globl _Z_sys64_setitimer
-.globl _Z_sys64_getpid
-.globl _Z_sys64_sendfile
-.globl _Z_sys64_socket
-.globl _Z_sys64_connect
-.globl _Z_sys64_accept
-.globl _Z_sys64_sendto
-.globl _Z_sys64_recvfrom
-.globl _Z_sys64_sendmsg
-.globl _Z_sys64_recvmsg
-.globl _Z_sys64_shutdown
-.globl _Z_sys64_blind
-.globl _Z_sys64_listen
-.globl _Z_sys64_getsockname
-.globl _Z_sys64_getpeername
-.globl _Z_sys64_socketpair
-.globl _Z_sys64_setsockopt
-.globl _Z_sys64_getsockopt
-.globl _Z_sys64_clone
-.globl _Z_sys64_fork
-.globl _Z_sys64_vfork
-.globl _Z_sys64_execve
-.globl _Z_sys64_exit
-.globl _Z_sys64_wait4
-.globl _Z_sys64_kill
-.globl _Z_sys64_uname
-.globl _Z_sys64_semget
-.globl _Z_sys64_semop
-.globl _Z_sys64_semctl
-.globl _Z_sys64_shmdt
-.globl _Z_sys64_msgget
-.globl _Z_sys64_msgsnd
-.globl _Z_sys64_msgrcv
-.globl _Z_sys64_msgctl
-.globl _Z_sys64_fcntl
-.globl _Z_sys64_flock
-.globl _Z_sys64_fsync
-.globl _Z_sys64_fdatasync
-.globl _Z_sys64_truncate
-.globl _Z_sys64_ftruncate
-.globl _Z_sys64_getdents
-.globl _Z_sys64_getcwd
-.globl _Z_sys64_chdir
-.globl _Z_sys64_fchdir
-.globl _Z_sys64_rename
-.globl _Z_sys64_mkdir
-.globl _Z_sys64_rmdir
-.globl _Z_sys64_creat
-.globl _Z_sys64_link
-.globl _Z_sys64_unlink
-.globl _Z_sys64_symlink
-.globl _Z_sys64_readlink
-.globl _Z_sys64_chmod
-.globl _Z_sys64_fchmod
-.globl _Z_sys64_chown
-.globl _Z_sys64_fchown
-.globl _Z_sys64_lchown
-.globl _Z_sys64_umask
-.globl _Z_sys64_gettimeofday
-.globl _Z_sys64_getrlimit
-.globl _Z_sys64_getrusage
-.globl _Z_sys64_sysinfo
-.globl _Z_sys64_times
-.globl _Z_sys64_ptrace
-.globl _Z_sys64_getuid
-.globl _Z_sys64_syslog
-.globl _Z_sys64_getgid
-.globl _Z_sys64_setuid
-.globl _Z_sys64_setgid
-.globl _Z_sys64_geteuid
-.globl _Z_sys64_getegid
-.globl _Z_sys64_setpgid
-.globl _Z_sys64_getppid
-.globl _Z_sys64_getpgrp
-.globl _Z_sys64_setsid
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-.globl _Z_sys64_
-
-_Z_sys64_read:
-    mov $0, %rax
-    syscall
-    ret
-_Z_sys64_write:
-    mov $1, %rax
-    syscall
-    ret
-_Z_sys64_open:
-    mov $2, %rax
-    syscall
-    ret
-_Z_sys64_close:
-    mov $3, %rax
-    syscall
-    ret
-_Z_sys64_stat:
-    mov $4, %rax
-    syscall
-    ret
-_Z_sys64_fstat:
-    mov $5, %rax
-    syscall
-    ret
-_Z_sys64_lstat:
-    mov $6, %rax
-    syscall
-    ret
-_Z_sys64_poll:
-    mov $7, %rax
-    syscall
-    ret
-_Z_sys64_lseek:
-    mov $8, %rax
-    syscall
-    ret
-_Z_sys64_mmap:
-    mov %rcx, %r10
-    mov $9, %rax
-    syscall
-    ret
-_Z_sys64_mprotect:
-_Z_sys64_munmap:
-_Z_sys64_brk:
-_Z_sys64_rt_sigaction:
-_Z_sys64_rt_sigprocmask:
-_Z_sys64_sigreturn:
-_Z_sys64_ioctl:
-_Z_sys64_pread64:
-_Z_sys64_pwrite64:
-_Z_sys64_readv:
-_Z_sys64_writev:
-_Z_sys64_access:
-_Z_sys64_pipe:
-_Z_sys64_select:
-_Z_sys64_sched_yield:
-_Z_sys64_mremap:
-_Z_sys64_msync:
-_Z_sys64_mincore:
-_Z_sys64_madvise:
-_Z_sys64_shmget:
-_Z_sys64_shmat:
-_Z_sys64_shmctl:
-_Z_sys64_dup:
-_Z_sys64_dup2:
-_Z_sys64_pause:
-_Z_sys64_nanosleep:
-_Z_sys64_getitimer:
-_Z_sys64_alarm:
-_Z_sys64_setitimer:
-_Z_sys64_getpid:
-_Z_sys64_sendfile:
-_Z_sys64_socket:
-_Z_sys64_connect:
-_Z_sys64_accept:
-_Z_sys64_sendto:
-_Z_sys64_recvfrom:
-_Z_sys64_sendmsg:
-_Z_sys64_recvmsg:
-_Z_sys64_shutdown:
-_Z_sys64_blind:
-_Z_sys64_listen:
-_Z_sys64_getsockname:
-_Z_sys64_getpeername:
-_Z_sys64_socketpair:
-_Z_sys64_setsockopt:
-_Z_sys64_getsockopt:
-_Z_sys64_clone:
-_Z_sys64_fork:
-_Z_sys64_vfork:
-_Z_sys64_execve:
-_Z_sys64_exit:
-_Z_sys64_wait4:
-_Z_sys64_kill:
-_Z_sys64_uname:
-_Z_sys64_semget:
-_Z_sys64_semop:
-_Z_sys64_semctl:
-_Z_sys64_shmdt:
-_Z_sys64_msgget:
-_Z_sys64_msgsnd:
-_Z_sys64_msgrcv:
-_Z_sys64_msgctl:
-_Z_sys64_fcntl:
-_Z_sys64_flock:
-_Z_sys64_fsync:
-_Z_sys64_fdatasync:
-_Z_sys64_truncate:
-_Z_sys64_ftruncate:
-_Z_sys64_getdents:
-_Z_sys64_getcwd:
-_Z_sys64_chdir:
-_Z_sys64_fchdir:
-_Z_sys64_rename:
-_Z_sys64_mkdir:
-_Z_sys64_rmdir:
-_Z_sys64_creat:
-_Z_sys64_link:
-_Z_sys64_unlink:
-_Z_sys64_symlink:
-_Z_sys64_readlink:
-_Z_sys64_chmod:
-_Z_sys64_fchmod:
-_Z_sys64_chown:
-_Z_sys64_fchown:
-_Z_sys64_lchown:
-_Z_sys64_umask:
-_Z_sys64_gettimeofday:
-_Z_sys64_getrlimit:
-_Z_sys64_getrusage:
-_Z_sys64_sysinfo:
-_Z_sys64_times:
-_Z_sys64_ptrace:
-_Z_sys64_getuid:
-_Z_sys64_syslog:
-_Z_sys64_getgid:
-_Z_sys64_setuid:
-_Z_sys64_setgid:
-_Z_sys64_geteuid:
-_Z_sys64_getegid:
-_Z_sys64_setpgid:
-_Z_sys64_getppid:
-_Z_sys64_getpgrp:
-_Z_sys64_setsid:
+.set zu64sys_read               , 0x0
+.set zu64sys_write              , 0x1
+.set zu64sys_open               , 0x2
+.set zu64sys_close              , 0x3
+.set zu64sys_stat               , 0x4
+.set zu64sys_fstat              , 0x5
+.set zu64sys_lstat              , 0x6
+.set zu64sys_poll               , 0x7
+.set zu64sys_lseek              , 0x8
+.set zu64sys_mmap               , 0x9
+.set zu64sys_mprotect           , 0xa
+.set zu64sys_munmap             , 0xb
+.set zu64sys_brk                , 0xc
+.set zu64sys_rt_sigaction       , 0xd
+.set zu64sys_rt_sigprocmask     , 0xe
+.set zu64sys_sigreturn          , 0xf
+.set zu64sys_ioctl              , 0x10
+.set zu64sys_pread64            , 0x11
+.set zu64sys_pwrite64           , 0x12
+.set zu64sys_readv              , 0x13
+.set zu64sys_writev             , 0x14
+.set zu64sys_access             , 0x15
+.set zu64sys_pipe               , 0x16
+.set zu64sys_select             , 0x17
+.set zu64sys_sched_yield        , 0x18
+.set zu64sys_mremap             , 0x19
+.set zu64sys_msync              , 0x1a
+.set zu64sys_mincore            , 0x1b
+.set zu64sys_madvise            , 0x1c
+.set zu64sys_shmget             , 0x1d
+.set zu64sys_shmat              , 0x1e
+.set zu64sys_shmctl             , 0x1f
+.set zu64sys_dup                , 0x20
+.set zu64sys_dup2               , 0x21
+.set zu64sys_pause              , 0x22
+.set zu64sys_nanosleep          , 0x23
+.set zu64sys_getitimer          , 0x24
+.set zu64sys_alarm              , 0x25
+.set zu64sys_setitimer          , 0x26
+.set zu64sys_getpid             , 0x27
+.set zu64sys_sendfile           , 0x28
+.set zu64sys_socket             , 0x29
+.set zu64sys_connect            , 0x2a
+.set zu64sys_accept             , 0x2b
+.set zu64sys_sendto             , 0x2c
+.set zu64sys_recvfrom           , 0x2d
+.set zu64sys_sendmsg            , 0x2e
+.set zu64sys_recvmsg            , 0x2f
+.set zu64sys_shutdown           , 0x30
+.set zu64sys_blind              , 0x31
+.set zu64sys_listen             , 0x32
+.set zu64sys_getsockname        , 0x33
+.set zu64sys_getpeername        , 0x34
+.set zu64sys_socketpair         , 0x35
+.set zu64sys_setsockopt         , 0x36
+.set zu64sys_getsockopt         , 0x37
+.set zu64sys_clone              , 0x38
+.set zu64sys_fork               , 0x39
+.set zu64sys_vfork              , 0x3a
+.set zu64sys_execve             , 0x3b
+.set zu64sys_exit               , 0x3c
+.set zu64sys_wait4              , 0x3d
+.set zu64sys_kill               , 0x3e
+.set zu64sys_uname              , 0x3f
+.set zu64sys_semget             , 0x40
+.set zu64sys_semop              , 0x41
+.set zu64sys_semctl             , 0x42
+.set zu64sys_shmdt              , 0x43
+.set zu64sys_msgget             , 0x44
+.set zu64sys_msgsnd             , 0x45
+.set zu64sys_msgrcv             , 0x46
+.set zu64sys_msgctl             , 0x47
+.set zu64sys_fcntl              , 0x48
+.set zu64sys_flock              , 0x49
+.set zu64sys_fsync              , 0x4a
+.set zu64sys_fdatasync          , 0x4b
+.set zu64sys_truncate           , 0x4c
+.set zu64sys_ftruncate          , 0x4d
+.set zu64sys_getdents           , 0x4e
+.set zu64sys_getcwd             , 0x4f
+.set zu64sys_chdir              , 0x50
+.set zu64sys_fchdir             , 0x51
+.set zu64sys_rename             , 0x52
+.set zu64sys_mkdir              , 0x53
+.set zu64sys_rmdir              , 0x54
+.set zu64sys_creat              , 0x55
+.set zu64sys_link               , 0x56
+.set zu64sys_unlink             , 0x57
+.set zu64sys_symlink            , 0x58
+.set zu64sys_readlink           , 0x59
+.set zu64sys_chmod              , 0x5a
+.set zu64sys_fchmod             , 0x5b
+.set zu64sys_chown              , 0x5c
+.set zu64sys_fchown             , 0x5d
+.set zu64sys_lchown             , 0x5e
+.set zu64sys_umask              , 0x5f
+.set zu64sys_gettimeofday       , 0x60
+.set zu64sys_getrlimit          , 0x61
+.set zu64sys_getrusage          , 0x62
+.set zu64sys_sysinfo            , 0x63
+.set zu64sys_times              , 0x64
+.set zu64sys_ptrace             , 0x65
+.set zu64sys_getuid             , 0x66
+.set zu64sys_syslog             , 0x67
+.set zu64sys_getgid             , 0x68
+.set zu64sys_setuid             , 0x69
+.set zu64sys_setgid             , 0x6a
+.set zu64sys_geteuid            , 0x6b
+.set zu64sys_getegid            , 0x6c
+.set zu64sys_setpgid            , 0x6d
+.set zu64sys_getppid            , 0x6e
+.set zu64sys_getpgrp            , 0x6f
+.set zu64sys_setsid             , 0x70

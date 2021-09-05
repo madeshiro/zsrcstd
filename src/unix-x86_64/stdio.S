@@ -1,8 +1,10 @@
 # Unix x86_64 assembly files
 # @file stdio.S - system call
-# @version 2020/11 0.3.0
+# @version 2021/09 0.5.0
 .att_syntax
 .text
+.include "zsr_asm_const.S"
+.include "syscall64.S"
 
 #### <<< stdio.S / unix-x86_64 >>> ####
 # > all functions are aligned with standard `.h` declarations (x-platform decl)
@@ -13,109 +15,112 @@
 #
 # //
 
-.globl _Z_sys_read
-.globl _Z_sys_write
-.globl _Z_sys_open
-.globl _Z_sys_close
-.globl _Z_sys_link
-.globl _Z_sys_unlink
-.globl _Z_sys_lseek
-.globl _Z_sys_mkdir
-.globl _Z_sys_rmdir
-
-
-# @brief _Z_sys_read
-# @param %rdi (char*) - buffer
-# @param %rsi (zsize_t) - how many chars to read
-# @param %rdx (unsigned int) - fd
-# @return %rax (ssize_t) - numbers of char reads
-_Z_sys_read:
-    push %rdx
-
-    mov %rsi, %rdx # (size_t) count
-    mov %rdi, %rsi # (char*) buf
-    pop %rdi       # (unsigned int) fd
-    mov $0x0, %rax # sys_read
-    syscall
-    nop
-    retq
-
-# @brief _Z_sys_write
-# @param %rdi (const char*) - buffer
-# @param %rsi (zsize_t) - count
-# @param %rdx (unsigned int) - fd
-_Z_sys_write:
-    push %rdx
-    mov %rsi, %rdx  # count
-    mov %rdi, %rsi  # buf
-    pop %rdi        # fd
-    mov $0x1, %rax  # sys_write
-    syscall
-    nop
-    retq
-
-# @brief _Z_sys_open
-# @param %rdi (const char*) - name
-# @param %rsi (int) - flags
-# @param %rdx (int) - mode
-# @return %rax (int) - fd
-_Z_sys_open:
-    mov $0x2, %rax
-    syscall
-    retq
-
-# @brief _Z_sys_close
-# @param %edi (uint) - fd
-# @return %rax (int) - status
-_Z_sys_close:
-    mov $0x3, %rax
-    syscall
-    retq
-
-# @brief _Z_sys_link
-# @param %rdi (const char*) - oldname
-# @param %rsi (const char*) - newname
-# @return %rax (int) - status
-_Z_sys_link:
-    mov $0x56, %rax
-    syscall
-    retq
-
-# @brief _Z_sys_unlink
-# @param %rdi (const char*) - fname
-# @return %rax (int) - status
-_Z_sys_unlink:
-    mov $0x57, %rax
-    syscall
-    retq
-
-# @brief _Z_sys_lseek
-# @param %edi (int) - fd
-# @param %rsi (long) - offset
-# @param %rdx (int) - whence
-_Z_sys_lseek:
-    mov $0x8, %rax
-    syscall
-    retq
-
-
-.globl zmkdir
-# @brief _Z_sys_mkdir
-# @param %rdi (char*) - path
-# @return %rax (bool)
-_Z_sys_mkdir:
-zmkdir:
-    mov $0777, %rsi
-    mov $0x53, %rax
+.globl __z_xapi_dup
+# @brief __z_xapi_dup
+# @param %rdi (int) - fd
+# @return %rax (int)
+__z_xapi_dup:
+    mov $zu64sys_dup, %rax
     syscall
     ret
 
-.globl zrmdir
-# @brief _Z_sys_rmdir
-# @param %rdi (char*) - path
-# @return %rax (bool)
-_Z_sys_rmdir:
-zrmdir:
-    mov $0x54, %rax
+.globl __z_xapi_dup2
+# @brief __z_xapi_dup2
+# @param %edi (int) - oldfd
+# @param %esi (int) - newfd
+# @return %rax (int) - the new fd
+__z_xapi_dup2:
+    push %rbp
+    mov %rsp, %rbp
+    sub $0x20, %rsp
+    mov %edi, -0x4(%rbp)
+    mov %esi, -0x8(%rbp)
+    lea -0xa(%rbp), %rdx
+    call __zu64_dup2_@plt
+    cmpw $0x1, -0xa(%rbp)
+    je 1f
+    mov -0x4(%rbp), %edi
+    mov -0x8(%rbp), %esi
+    mov $zu64sys_dup2, %rax
+    syscall
+ 1: add $0x20, %rsp
+    pop %rbp
+    ret
+
+.globl zu64_dup2
+zu64_dup2:
+    mov $zu64sys_dup2, %rax
     syscall
     ret
+
+.globl __z_xapi_read
+# @brief __z_xapi_read
+# @param %rdi (char*) # _Z_out - buf
+# @param %rsi (ulong) - len
+# @param %rdx (fd_t) - fd
+# @return %eax (int) - read len
+__z_xapi_read:
+    xchg %rdi, %rdx
+    xchg %rdx, %rsi
+    mov $zu64sys_read, %rax
+    syscall
+    ret
+
+.globl __z_xapi_write
+# @brief __z_xapi_write
+# @param %rdi (const char*) - buf
+# @param %rsi (ulong) - len
+# @param %rdx (fd_t) - fd
+# @return %eax (int) - wlen
+__z_xapi_write:
+    xchg %rdi, %rdx
+    xchg %rdx, %rsi
+    mov $zu64sys_write, %rax
+    syscall
+    ret
+
+.globl __z_xapi_lseek
+# @brief __z_xapi_lseek
+# @param %edi (long) - offset
+# @param %esi (int) - whence
+# @param %rdx (fd_t) - fd
+__z_xapi_lseek:
+    xchg %rdi, %rdx
+    xchg %rdx, %rsi
+    mov $zu64sys_lseek, %rax
+    syscall
+    ret
+
+.globl __z_xapi_fclose
+# @brief __z_xapi_fclose
+# @param %rdi (ZHFILE)
+# @note (it -> fd) .size 4 @ 0x8 (%zhfile)
+# @return %rax (zbool)
+__z_xapi_fclose:
+    movl 0x8(%rdi), %edi
+    mov $zu64sys_close, %rax
+    syscall
+    inc %eax
+    test %eax, %eax
+    jne 1f
+    call __zu64_errno@plt
+    mov $0x0, %rax
+ 1: ret
+
+.globl  __z_xapi_fread
+# @brief __z_xapi_fread
+# @param %rdi (char*) - buf
+# @param %rsi (ulong) - len
+# @param %rdx (ZHFILE)
+# @return %rax (int) - read
+__z_xapi_fread:
+    push %rbp
+    mov %rsp, %rbp
+    sub $0x10, %rsp
+    mov %rdx, -0x8(%rbp)
+    xchg %rdx, %rdi
+    xchg %rdx, %rsi
+    mov 0x8(%rdi), %edi
+    mov $zu64sys_read, %rax
+    syscall
+
