@@ -47,7 +47,7 @@ __z_xapi_alloc:
     mov -0x8(%rbp), %rdi
     mov -0xa(%rbp), %si
     mov %rdi, (%rax)
-    add 0x8, %rdi
+    add $0x8, %rdi
     cmp $0, %si
     je 2f
     mov $0x0, %rdx
@@ -77,43 +77,13 @@ __z_xapi_free:
 # @brief __z_xapi_realloc
 # @param %rdi (void*)   - ptr
 # @param %rsi (size_t)  - sizeof
-# @param %dx  (bool)    - free old ptr
 # @return %rax (void*)  - new ptr
 __z_xapi_realloc:
-    push %rbp
-    mov %rsp, %rbp
-    sub $0x20, %rsp
-    mov %rdi, -0x8(%rbp)
-    mov %rsi, -0x10(%rbp)
-    mov %dx, -0x12(%rbp)
-    mov %rsi, %rdi
-    mov $0x0, %rsi
-    call __z_xapi_alloc@plt
-    test %rax, %rax
-    je 2f
-    mov -0x8(%rdi), %rdi
-    mov -0x10(%rbp), %rsi
-    mov -0x8(%rdi), %rcx
-    cmp %rsi, %rcx
-    jbe 4f
-    mov %rcx, %rsi
- 4: mov $0, %rdx
- 1: cmp %rsi, %rdx
-    jae 1f
-    movb (%rdi, %rdx, 1), %cl
-    movb %cl, (%rax, %rdx, 1)
-    inc %rdx
-    jmp 1b
- 1: cmpw $0x0, -0x12(%rbp)
-    je 3f
-    mov %rax, -0x8(%rbp)
-    call __z_xapi_free@plt
-    mov -0x8(%rbp), %rax
-    jmp 3f
- 2: mov $0x0, %rax
-    jmp 3f
- 3: add $0x20, %rsp
-    pop %rbp
+    mov %rsi, %rdx
+    mov $0x1, %r10
+    mov -0x8(%rdi), %rsi
+    mov $zusys_mremap, %rax
+    syscall
     ret
 
 .globl __z_xapi_memsize
