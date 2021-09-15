@@ -17,6 +17,10 @@
 #define ZSR_SEEK_CUR 1
 #define ZSR_SEEK_END 2
 
+#define ZSR_FLOCK_SH    0
+#define ZSR_FLOCK_EX    1
+#define ZSR_FLOCK_UN    2
+
 #ifdef __cplusplus
 extern "C" {
 #endif // c++

@@ -13,6 +13,7 @@ extern "C" {
     zsr_file zstdfile(int fd);
 
 #ifndef ZSR_DEFINED_STDFILENO
+#define ZSR_DEFINED_STDFILENO
 #   define zstdin  zstdfile(ZSR_IO_STDIN)
 #   define zstdout zstdfile(ZSR_IO_STDOUT)
 #   define zstderr zstdfile(ZSR_IO_STDERR)

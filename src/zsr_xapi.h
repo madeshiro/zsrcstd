@@ -152,6 +152,7 @@ extern "C" {
     zsrcall int   __z_xapi_fwrite(const char*, zulong, ZHFILE);
     zsrcall zlong __z_xapi_fseek(long offset, int whence, ZHFILE);
     zsrcall zlong __z_xapi_ftell(ZHFILE);
+    zsrcall zbool __z_xapi_flock(ZHFILE, zflag op);
     zsrcall zbool __z_xapi_frename(const char*, const char*);
     zsrcall zbool __z_xapi_fremove(const char*);
 

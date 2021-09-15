@@ -47,7 +47,7 @@ struct
  * Uses to call directly a x-platform valid declared function from the X/API;
  * @note Works only with GNU compiler (and alikes). MSC has to call an intermediate function.
  */
-#   define _Z_xapieq(alias) _Z_gnuint(__asm__("__z_xapi" alias))
+#   define _Z_xapieq(alias) _Z_gnuint(__asm__("__z_xapi_" alias))
 #endif
 
 /*<< ZSR LIB KEYWORD >>*/
@@ -64,11 +64,13 @@ typedef unsigned long zflag;
 #ifdef ZSR_COMPILER_GNU
     typedef __WCHAR_TYPE__  wchar_t;
     typedef char            char8_t;
+    typedef unsigned char   latin1_t;
     typedef __CHAR16_TYPE__ char16_t;
     typedef __CHAR32_TYPE__ char32_t;
 #else
     typedef unsigned int    wchar_t;
     typedef char            char8_t;
+    typedef unsigned char   latin1_t;
     typedef signed short    char16_t;
     typedef signed int      char32_t;
 #endif  // ZSR_COMPILER_GNU
@@ -158,7 +160,9 @@ typedef zdouble zbigfloat; // biggest float
 
 #define zerror zgetlasterror()
 #define ZEAGAIN     0x00000010
+#define ZEBADF      0x00002000
 #define ZEBUSY      0x00000020
+#define ZEINTR      0x00004000
 #define ZEINVAL     0x00000040
 #define ZENOLCK     0x00001000
 #define ZENOMEM     0x00000080
@@ -205,19 +209,19 @@ extern "C" {
      * @param [in] _size (zsize_t) - The new size to reallocate
      * @return The pointer reallocated to a new memory block
      */
-    zptr zrealloc(zptr _ptr, zsize_t _size);
+    zptr zrealloc(zptr _ptr, zsize_t _size) _Z_xapieq("realloc");
     /**
      * @brief Delete a pointer (free memory).
      * @param [in] _ptr (void*) - Pointer to release
      * @return True on success, False otherwise.
      */
-    zbool zsrcall zfree(void* _ptr) _Z_gnuint(__asm__("__z_xapi_free"));
+    zbool zsrcall zfree(void* _ptr) _Z_xapieq("free");
     /**
      * @brief Get pointer size.
      * @param _ptr (const void*) - The pointer to get the size of
      * @return The pointer size
      */
-    zsize_t zsrcall zallocs(const void* _ptr) _Z_gnuint(__asm__("__z_xapi_memsize"));
+    zsize_t zsrcall zallocs(const void* _ptr) _Z_xapieq("memsize");
 
     /**
      *
@@ -238,7 +242,7 @@ extern "C" {
      * @brief Exit the process
      * @param status (int) - Status' code of how the program ended
      */
-    void zsrcall zexit(int status) _Z_gnuint(__asm__("__z_xapi_exit"));
+    void zsrcall zexit(int status) _Z_xapieq("exit");
 
     /**
      *
